@@ -23,6 +23,7 @@ module.exports = configure(function (/* ctx */) {
 		boot: [
 			'i18n',
 			'axios',
+			'apex-charts'
 		],
 
 		// https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
@@ -40,8 +41,10 @@ module.exports = configure(function (/* ctx */) {
 			// 'line-awesome',
 			// 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
 
-			'roboto-font', // optional, you are not bound to it
-			'material-icons', // optional, you are not bound to it
+			// 'roboto-font', // optional, you are not bound to it
+			// 'material-icons', // optional, you are not bound to it
+			// 'bootstrap-icons',
+			'material-symbols-rounded'
 		],
 
 		// Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
@@ -68,7 +71,13 @@ module.exports = configure(function (/* ctx */) {
 			// distDir
 
 			// extendViteConf (viteConf) {},
-			// viteVuePluginOptions: {},
+			viteVuePluginOptions: {
+				template: {
+					compilerOptions: {
+						isCustomElement: (tag) => tag.startsWith('swiper-')
+					}
+				}
+			},
 
 			vitePlugins: [
 				['@intlify/vite-plugin-vue-i18n', {
@@ -96,14 +105,14 @@ module.exports = configure(function (/* ctx */) {
 		// Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
 		devServer: {
 			// https: true
-			open: true // opens browser window automatically
+			open: false // opens browser window automatically
 		},
 
 		// https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
 		framework: {
 			config: {},
 
-			// iconSet: 'material-icons', // Quasar icon set
+			iconSet: 'material-symbols-rounded', // Quasar icon set
 			// lang: 'en-US', // Quasar language pack
 
 			// For special cases outside of where the auto-import strategy can have an impact

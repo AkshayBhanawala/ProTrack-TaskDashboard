@@ -1,1 +1,106 @@
 // app global css in SCSS form
+@import './web-fonts/PlusJakartaSans.css';
+@import './container.scss';
+
+body {
+	font-family: 'Plus Jakarta Sans', sans-serif;
+	font-size: 14px;
+	background-color: $background;
+	color: $text;
+}
+
+.header1 {
+	font-weight: 600;
+	font-size: 28px;
+}
+
+.header2 {
+	font-weight: 600;
+	font-size: 24px;
+}
+
+.header3 {
+	font-weight: 600;
+	font-size: 16px;
+}
+
+.small {
+	font-size: 11px;
+}
+
+.btn-text {
+	font-size: 12px;
+	text-transform: capitalize;
+}
+
+.color-primary {
+	color: $primary;
+}
+
+.color-secondary {
+	color: $secondary;
+}
+
+.color-tertiary {
+	color: $tertiary;
+}
+
+.color-accent {
+	color: $accent;
+}
+
+.color-accent2 {
+	color: $accent2;
+}
+
+.color-text {
+	color: $text;
+}
+
+.color-subtext {
+	color: $subtext;
+}
+
+.color-separator {
+	border-color: $separator-color;
+	background-color: $separator-color;
+	color: $separator-color;
+}
+
+.bg-tertiary {
+	background-color: $tertiary;
+}
+
+.text-tertiary {
+	color: $tertiary;
+}
+
+.bg-accent2 {
+	background-color: $accent2;
+}
+
+.text-accent2 {
+	color: $accent2;
+}
+
+
+.border-separator {
+
+	&,
+	&:after,
+	&:before {
+		border-width: 1px;
+		border-color: $separator-color;
+	}
+}
+
+hr {
+	@extend .color-separator !optional;
+	border: 1px solid;
+	border-bottom: 0;
+	border-radius: 1px;
+}
+
+.fit-content {
+	width: fit-content;
+}
