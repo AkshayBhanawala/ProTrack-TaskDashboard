@@ -43,9 +43,9 @@
 </template>
 
 <script setup lang="ts">
-	import FooterMain from 'src/components/FooterMain.vue';
-	import HeaderMain from 'src/components/HeaderMain.vue';
-	import MenuSideBar from 'src/components/MenuSideBar.vue';
+	import FooterMain from '@/components/FooterMain.component.vue';
+	import HeaderMain from '@/components/HeaderMain.component.vue';
+	import MenuSideBar from '@/components/MenuSideBar.component.vue';
 	import { useLeftSideBarState, useRightSideBarState } from 'src/stores/store';
 
 	defineOptions({

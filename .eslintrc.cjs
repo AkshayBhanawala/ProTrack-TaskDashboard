@@ -48,12 +48,12 @@ module.exports = {
 
 		// https://eslint.vuejs.org/user-guide/#why-doesn-t-it-work-on-vue-files
 		// required to lint *.vue files
-		'vue'
+		'vue',
 
 		// https://github.com/typescript-eslint/typescript-eslint/issues/389#issuecomment-509292674
 		// Prettier has not been included as plugin to avoid performance impact
 		// add it as an extension for your IDE
-
+		// "simple-import-sort",
 	],
 
 	globals: {
@@ -69,9 +69,17 @@ module.exports = {
 		chrome: 'readonly'
 	},
 
+	settings: {
+		"import/resolver": {
+			"typescript": {},
+			"node": {
+				"extensions": [".js", ".jsx", ".ts", ".tsx"]
+			}
+		}
+	},
 	// add your custom rules here
 	rules: {
-		'sort-imports': 'error',
+		// 'sort-imports': 'error',
 		"import/order": [
 			"warn",
 			{
@@ -93,6 +101,28 @@ module.exports = {
 				"newlines-between": "always"
 			}
 		],
+		// 'simple-import-sort/imports': [
+		// 	"error",
+		// 	{
+		// 		"groups": [
+		// 			// 1. Side effect imports at the start. For me this is important because I want to import reset.css and global styles at the top of my main file.
+		// 			["^\\u0000"],
+		// 			// 2. `react` and packages: Things that start with a letter (or digit or underscore), or `@` followed by a letter.
+		// 			["^vue$", "^@?\\w"],
+		// 			// 3. Absolute imports and other imports such as Vue-style `@/foo`.
+		// 			// Anything not matched in another group. (also relative imports starting with "../")
+		// 			["^@", "^"],
+		// 			// 4. relative imports from same folder "./" (I like to have them grouped together)
+		// 			["^\\./"],
+		// 			// 5. style module imports always come last, this helps to avoid CSS order issues
+		// 			["^.+\\.(module.css|module.scss)$"],
+		// 			// 6. media imports
+		// 			["^.+\\.(gif|png|svg|jpg)$"]
+		// 		]
+		// 	}
+		// ],
+		// 'simple-import-sort/exports': 'error',
+
 		'prefer-promise-reject-errors': 'off',
 
 		quotes: ['warn', 'single', { avoidEscape: true }],
@@ -106,8 +136,11 @@ module.exports = {
 		// The core 'no-unused-vars' rules (in the eslint:recommended ruleset)
 		// does not work with type definitions
 		'no-unused-vars': 'off',
+		'@typescript-eslint/no-unused-vars': 'warn',
 
 		// allow debugger during development only
-		'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
+		'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+
+		'@typescript-eslint/no-explicit-any': 'off',
 	}
 }

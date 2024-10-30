@@ -36,7 +36,8 @@
 
 <script setup lang="ts">
 	import { ref } from 'vue';
-	import AccountInfoCard from './AccountInfoCard.vue';
+
+	import AccountInfoCard from '@/components/AccountInfoCard.component.vue';
 
 	defineOptions({
 		name: 'MenuSideBar',

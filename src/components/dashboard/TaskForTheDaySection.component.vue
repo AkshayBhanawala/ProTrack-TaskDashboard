@@ -62,10 +62,19 @@
 	</q-card>
 </template>
 <script setup lang="ts">
-	import moment, { Moment } from 'moment';
 	import { QCardSection } from 'quasar';
-	import { ref } from 'vue';
-	import ToolTip from '../ToolTip.vue';
+	import { onMounted, ref } from 'vue';
+
+	import ToolTip from '@/components/ToolTip.component.vue';
+	import { PartialTaskStatus, Task } from '@/models';
+	import { taskService } from '@/services';
+
+	interface Props {
+		photoOnly?: boolean;
+		noBorder?: boolean;
+		noOnlineStatus?: boolean;
+	}
+
 	defineOptions({
 		name: 'TaskForTheDaySection',
 		components: {
@@ -75,113 +84,11 @@
 
 	withDefaults(defineProps<Props>(), {});
 
-	enum PartialTaskStatus {
-		VALUE = 'PARTIAL',
-	}
+	const tasks = ref<Task[]>([]);
 
-	type TaskStatus = boolean | PartialTaskStatus.VALUE;
-
-	interface Props {
-		photoOnly?: boolean;
-		noBorder?: boolean;
-		noOnlineStatus?: boolean;
-	}
-
-	interface Tag {
-		label: string;
-		color: string;
-	}
-	const tags = {
-		Donations: { label: 'Donations', color: 'accent2' },
-		Social: { label: 'Social', color: 'accent' },
-		Sports: { label: 'Sports', color: 'secondary' },
-		SelfCare: { label: 'SelfCare', color: 'tertiary' },
-		Shopping: { label: 'Shopping', color: 'negative' },
-	};
-
-	class BaseTask<AllowedStatus = TaskStatus> {
-		label: string;
-		isCompleted: AllowedStatus;
-		date: Moment;
-		// inProgress: boolean;
-		// dateAdded: Moment;
-		// dateCompleted?: Moment;
-
-		constructor(label: string, isCompleted: AllowedStatus, date: Moment) {
-			this.label = label;
-			this.isCompleted = isCompleted;
-			this.date = date;
-			// this.inProgress = inProgress;
-			// this.dateAdded = dateAdded;
-			// this.dateCompleted = dateCompleted;
-		}
-	}
-
-	class Task extends BaseTask {
-		subtasks: BaseTask<boolean>[];
-		tags: Tag[];
-
-		constructor(label: string, isCompleted: boolean, date: Moment, subtasks: BaseTask<boolean>[] = [], tags: Tag[] = []) {
-			super(label, isCompleted, date);
-			this.subtasks = subtasks?.length ? subtasks : [];
-			this.tags = tags?.length ? tags : [];
-		}
-
-		getDates() {
-			return this.subtasks.map((subtask) => subtask.date);
-		}
-
-		get isFullyCompleted(): TaskStatus {
-			if (!this.subtasks?.length) {
-				return this.isCompleted;
-			}
-			const states = new Set(this.subtasks.map((subtask) => subtask.isCompleted));
-			if (states.size > 1) {
-				return PartialTaskStatus.VALUE;
-			} else {
-				return [...states]?.at(0) || false;
-			}
-		}
-
-		set isFullyCompleted(value: boolean) {
-			this.isCompleted = value;
-			this.subtasks.forEach((subtask) => {
-				subtask.isCompleted = value;
-			});
-		}
-
-		isPartiallyCompleted() {
-			if (this.subtasks?.length) {
-				return false;
-			}
-			return new Set(this.subtasks.map((subtask) => subtask.isCompleted)).size > 1;
-		}
-	}
-
-	const tasks = ref<Task[]>(getTasksForTheDay());
-
-	function getTasksForTheDay(): Task[] {
-		const task1 = new Task('Donate Rs. 1000 to the charity', true, moment());
-		task1.subtasks = [new BaseTask('Donate Rs. 500 to the charity', true, moment()), new BaseTask('Donate Rs. 500 to the charity', true, moment())];
-		task1.tags = [tags.Donations, tags.Social];
-
-		const task2 = new Task('Do 500 pushups', false, moment());
-		task2.subtasks = [
-			new BaseTask('Start with 100', true, moment()),
-			new BaseTask('Complete 200', true, moment()),
-			new BaseTask('Reach 400', false, moment()),
-			new BaseTask('Complete 500', false, moment()),
-		];
-		task2.tags = [tags.Sports, tags.SelfCare];
-
-		const task3 = new Task('Buy new headset', true, moment());
-		task3.tags = [tags.Shopping];
-
-		const task4 = new Task('Clean the room', false, moment());
-		task4.tags = [tags.SelfCare];
-
-		return [task1, task2, task3, task4];
-	}
+	onMounted(async () => {
+		tasks.value = await taskService.fetchTasks();
+	});
 </script>
 <style scoped lang="scss">
 	.notes-section {

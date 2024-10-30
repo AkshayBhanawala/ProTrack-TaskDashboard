@@ -61,22 +61,21 @@
 		</q-card-section>
 	</q-card>
 </template>
+
 <script setup lang="ts">
 	import { ApexOptions } from 'apexcharts';
-	import { QCardSection, getCssVar } from 'quasar';
-	import { ref, useTemplateRef } from 'vue';
+	import { QCardSection } from 'quasar';
+	import { onMounted, ref, useTemplateRef } from 'vue';
 	import { VueApexChartsComponent } from 'vue3-apexcharts';
-	import ToolTip from '../ToolTip.vue';
+
+	import ToolTip from '@/components/ToolTip.component.vue';
+	import { ApexChartEvents, ChartSeries, getChartOptions } from '@/models/WeeklyOverview.model';
+	import { weeklyOverviewService } from '@/services';
 
 	interface Props {
 		photoOnly?: boolean;
 		noBorder?: boolean;
 		noOnlineStatus?: boolean;
-	}
-
-	interface ChartSeries {
-		name: string;
-		data: number[];
 	}
 
 	defineOptions({
@@ -85,120 +84,64 @@
 			ToolTip,
 		},
 	});
+
 	withDefaults(defineProps<Props>(), {});
 
-	const changePercent = ref(getRandomChangePercent());
+	const changePercent = ref(0);
 	const graphRef = useTemplateRef<QCardSection>('graphRef');
 	const apexChartRef = useTemplateRef<VueApexChartsComponent>('apexChartRef');
 	const graphBorderStyle = ref({});
 	const chartSeries = ref<ChartSeries[]>([]);
-	const chartOptions = ref<ApexOptions>({
-		chart: {
-			type: 'line',
-			fontFamily: 'inherit',
-			height: '250px',
-			width: '100%',
-			stacked: false,
-			sparkline: { enabled: true },
-			animations: {
-				enabled: true,
-				animateGradually: { enabled: true, delay: 500 },
-				dynamicAnimation: { enabled: true, speed: 500 },
-			},
-			dropShadow: {
-				enabled: true,
-				enabledOnSeries: [0],
-				top: 20,
-				left: 0,
-				blur: 15,
-				color: getCssVar('secondary') ?? '',
-				opacity: 0.3,
-			},
-			toolbar: { show: false },
-			events: {
-				mounted: function (chartContext, config: ApexOptions) {
-					console.log('mounted:', chartContext, config);
-					updateGraphBorderStyle(chartContext);
-				},
-				updated: function (chartContext, config: ApexOptions) {
-					console.log('updated:', chartContext, config);
-					updateGraphBorderStyle(chartContext);
-				},
-			},
+	const chartOptions = ref<ApexOptions>();
+
+	const chartEvents: ApexChartEvents = {
+		mounted: function (chartContext, config: ApexOptions) {
+			console.log('mounted:', chartContext, config);
+			updateGraphBorderStyle(chartContext);
 		},
-		colors: [getCssVar('tertiary'), getCssVar('primary')],
-		// fill: { opacity: 0.8, type: 'solid' },
-		stroke: {
-			show: true,
-			curve: 'monotoneCubic',
-			lineCap: 'round',
-			colors: undefined,
-			width: 7,
-			dashArray: 0,
+		updated: function (chartContext, config: ApexOptions) {
+			console.log('updated:', chartContext, config);
+			updateGraphBorderStyle(chartContext);
 		},
-		tooltip: {
-			enabled: true,
-			fillSeriesColor: true,
-			// shared: false,
-			// intersect: false,
-			onDatasetHover: { highlightDataSeries: true },
-			x: { show: false },
-			y: { title: { formatter: () => '' } },
-		},
-		noData: { text: 'No Data' },
-		grid: {
-			show: false,
-			// padding: { left: 30, right: 30 }
-		},
-		dataLabels: { enabled: false },
-		markers: { size: 0 },
-		xaxis: {
-			tickPlacement: 'between',
-			categories: ['Mon', 'Tues', 'Wed', 'Thus', 'Fri', 'Sat'],
-			// overwriteCategories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-			labels: { show: true },
-			axisBorder: { show: false },
-			axisTicks: { show: false },
-			crosshairs: { show: false },
-			tooltip: { enabled: false },
-		},
-		yaxis: {
-			show: false,
-			forceNiceScale: true,
-			min: 0,
-			axisBorder: { show: false },
-			axisTicks: { show: false },
-			crosshairs: { show: false },
-			tooltip: { enabled: false },
-		},
-		legend: { show: false },
+	};
+	chartOptions.value = getChartOptions.line(chartEvents);
+
+	onMounted(async () => {
+		try {
+			const data = await weeklyOverviewService.fetchWeeklyOverview();
+			changePercent.value = getChangePercent(data.series);
+			// Update chart data
+			const yAxisMax: ApexOptions = {
+				yaxis: { max: getMaxYAxisValue(data.series) },
+			};
+			chartOptions.value = getChartOptions.line(chartEvents, yAxisMax);
+			chartSeries.value = data.series;
+
+			// apexChartRef.value?.updateOptions(chartOptions.value);
+			// apexChartRef.value?.updateSeries(data.series);
+		} catch (error) {
+			console.error('Failed to load weekly overview:', error);
+		}
 	});
 
-	setTimeout(() => {
-		const newDataSeries = [
-			{
-				name: 'this week',
-				data: [12, 17, 12, 17, 16],
-			},
-			{
-				name: 'last week',
-				data: [5, 8, 5, 10, 7, 15],
-			},
-		];
-		chartOptions.value.yaxis = {
-			...chartOptions.value.yaxis,
-			max: Math.max(...newDataSeries.flatMap((item) => item.data).filter((i) => i !== null)) + 5,
-		};
-		apexChartRef.value?.updateOptions(chartOptions.value);
-		chartSeries.value = [...newDataSeries] as ChartSeries[];
-	}, 0);
-
-	function getRandomChangePercent() {
-		const precision = 100;
-		return Math.floor((0.5 - Math.random()) * (10 * precision - 1 * precision) + 1 * precision) / (1 * precision);
+	function getChangePercent(chartSeries: ChartSeries[]): number {
+		const todayDay = new Date().getDay() - 1; // 0-5 (monday-saturday)
+		let thisWeekCompletedCount = 0;
+		for (let i = 0; i <= todayDay; i++) {
+			thisWeekCompletedCount += chartSeries[0].data[i];
+		}
+		let lastWeekCompletedCount = 0;
+		for (let i = 0; i <= todayDay; i++) {
+			lastWeekCompletedCount += chartSeries[1].data[i];
+		}
+		return Number(((thisWeekCompletedCount / lastWeekCompletedCount) * 100).toFixed(2));
 	}
 
-	function updateGraphBorderStyle(apexChartContext) {
+	function getMaxYAxisValue(chartSeries: ChartSeries[]): number {
+		return Math.max(...chartSeries.flatMap((item) => item.data).filter((i) => i)) + 5;
+	}
+
+	function updateGraphBorderStyle(apexChartContext): void {
 		const apexChartsGrid: HTMLDivElement = apexChartContext?.el?.getElementsByClassName('apexcharts-grid')?.item(0);
 		if (apexChartsGrid) {
 			const apexChartsGridRect: DOMRect = apexChartsGrid.getBoundingClientRect();
@@ -214,6 +157,7 @@
 		}
 	}
 </script>
+
 <style scoped lang="scss">
 	.calendar-section {
 		display: flex;

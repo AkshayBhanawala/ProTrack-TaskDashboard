@@ -31,12 +31,16 @@
 		</q-splitter>
 	</main>
 </template>
+
 <script setup lang="ts">
-	import CalendarSection from 'src/components/dashboard/CalendarSection.vue';
-	import NotesSection from 'src/components/dashboard/NotesSection.vue';
-	import TaskForTheDaySection from 'src/components/dashboard/TaskForTheDaySection.vue';
-	import WeeklyOverviewCard from 'src/components/dashboard/WeeklyOverviewCard.vue';
-	import { ref } from 'vue';
+	import { onMounted, ref } from 'vue';
+
+	import CalendarSection from '@/components/dashboard/CalendarSection.component.vue';
+	import NotesSection from '@/components/dashboard/NotesSection.component.vue';
+	import TaskForTheDaySection from '@/components/dashboard/TaskForTheDaySection.component.vue';
+	import WeeklyOverviewCard from '@/components/dashboard/WeeklyOverviewCard.component.vue';
+	import { getBiWeeklyTasks } from '@/models/_MasterTasksList';
+	import { useBiWeeklyTasks } from '@/stores/store';
 
 	interface Props {
 		photoOnly?: boolean;
@@ -59,7 +63,14 @@
 	const mainSplitter = ref(50);
 	const leftSplitter = ref(480);
 	const rightSplitter = ref(380);
+
+	onMounted(() => {
+		getBiWeeklyTasks().then((biWeeklyTasks) => {
+			useBiWeeklyTasks().setBiWeeklyTasks(biWeeklyTasks);
+		});
+	});
 </script>
+
 <style scoped lang="scss">
 	main {
 		padding: 15px 25px;

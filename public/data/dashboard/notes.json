@@ -1,0 +1,63 @@
+{
+	"notes": [
+		{
+			"title": "Follow Up with Mr. Ashton",
+			"content": "Following up on our meeting with Mr. Ashton, I wanted to recap the key points discussed and outline the action items moving forward. During the meeting, we touched upon the project timeline, budget considerations, and specific deliverables. Mr. Ashton expressed particular interest in our innovative solutions and requested a detailed proposal by next week. He emphasized the importance of maintaining regular communication and setting up bi-weekly progress reviews.",
+			"date": "2024-03-28",
+			"attachments": [
+				{
+					"fileName": "Screenshot Information.png",
+					"thumbnail": "https://picsum.photos/100/75",
+					"src": "https://picsum.photos/1000/750"
+				},
+				{
+					"fileName": "Important Information.png",
+					"thumbnail": "https://picsum.photos/101/76",
+					"src": "https://picsum.photos/1000/750"
+				},
+				{
+					"fileName": "Some More Information.png",
+					"thumbnail": "https://picsum.photos/102/77",
+					"src": "https://picsum.photos/1000/750"
+				},
+				{
+					"fileName": "Just Another Information.png",
+					"thumbnail": "https://picsum.photos/103/78",
+					"src": "https://picsum.photos/1000/750"
+				}
+			]
+		},
+		{
+			"title": "Setlist for Hackathon",
+			"content": "- Project Timeline\n- Budget Considerations\n- Specific Deliverables\n- Additional Features for Software Solution\n- Detailed Proposal for Review\n- Prepare the PPT\n- Review by Ravi\n- GD\n- The Grand Finale",
+			"date": "2024-03-15"
+		},
+		{
+			"title": "Auroras and Sad Prose",
+			"content": "In the twilight of northern skies,\nAuroras dance with gentle grace.\nWhile down below, a heart still cries,\nLonging words leave empty space.\n\nColors swirl in cosmic streams,\nNature's poetry in the night.\nReality blends into dreams,\nAs sadness turns to pure delight.",
+			"date": "2024-03-20"
+		},
+		{
+			"title": "Recipe: Classic Tiramisu",
+			"content": "Ingredients:\n- 6 egg yolks\n- 1 cup sugar\n- 1¼ cup mascarpone cheese\n- 1¾ cup heavy whipping cream\n- 2 packages ladyfingers\n- 1 cup cold espresso\n- ½ cup coffee liqueur\n- 1 tbsp cocoa powder\n\nInstructions:\n1. Mix yolks & sugar\n2. Add mascarpone & whipped cream\n3. Dip ladyfingers in coffee mixture\n4. Layer & refrigerate overnight\n5. Dust with cocoa before serving",
+			"date": "2024-03-22"
+		},
+		{
+			"title": "Book Notes: The Psychology of Money",
+			"content": "Key Takeaways:\n\n1. Wealth is hidden - it's the money not spent\n2. Compounding is about time, not returns\n3. Room for error is more important than returns\n4. Luck and risk are siblings\n5. Save money to gain control over time\n\nQuote: \"Building wealth has little to do with your income or investment returns, and lots to do with your savings rate.\"",
+			"date": "2024-03-23",
+			"attachments": [
+				{
+					"fileName": "The Psychology of Money.png",
+					"thumbnail": "https://picsum.photos/104/79",
+					"src": "https://picsum.photos/1000/750"
+				}
+			]
+		},
+		{
+			"title": "Garden Planning 2024",
+			"content": "Spring Planting Schedule:\n\nMarch:\n- Start tomatoes indoors\n- Plant peas and spinach\n\nApril:\n- Plant potatoes\n- Start herbs\n\nMay:\n- Transfer tomatoes outside\n- Plant cucumbers and zucchini\n\nRemember to:\n- Check soil pH\n- Set up irrigation system\n- Order organic fertilizer",
+			"date": "2024-03-25"
+		}
+	]
+}

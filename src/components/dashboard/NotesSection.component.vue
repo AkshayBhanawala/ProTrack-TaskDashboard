@@ -27,12 +27,12 @@
 			:rewind="true"
 			class="note-cards q-px-none"
 		>
-			<swiper-slide v-for="(note, i) in getNotes()" :key="i" :index="i" class="note-card">
+			<swiper-slide v-for="(note, i) in notes" :key="i" :index="i" class="note-card">
 				<q-card-section horizontal class="note-section-top">
 					<div class="note">
 						<div class="content">
-							<div class="header3 note-label">{{ note?.label }}</div>
-							<q-input borderless dense autogrow readonly class="note-description" v-model="note.description" />
+							<div class="header3 note-label">{{ note?.title }}</div>
+							<q-input borderless dense autogrow readonly class="note-description" v-model="note.content" />
 						</div>
 						<div v-if="note?.attachments?.length" class="attachments">
 							<div class="text-subtitle2">Attachments</div>
@@ -60,12 +60,13 @@
 	</q-card>
 </template>
 <script setup lang="ts">
-	import moment from 'moment';
 	import { QCardSection } from 'quasar';
-	import { SwiperContainer, register } from 'swiper/element/bundle';
-	import { ref } from 'vue';
-	import { Note } from '../../models';
-	import ToolTip from '../ToolTip.vue';
+	import { register, SwiperContainer } from 'swiper/element/bundle';
+	import { onMounted, ref } from 'vue';
+
+	import ToolTip from '@/components/ToolTip.component.vue';
+	import { Note } from '@/models';
+	import { notesService } from 'src/services';
 
 	register();
 
@@ -84,57 +85,13 @@
 		noOnlineStatus?: boolean;
 	}
 
+	const notes = ref<Note[]>([]);
 	const swiperRef = ref<SwiperContainer>();
 
-	function getNotes(): Note[] {
-		const note1 = new Note(
-			'Follow Up with Mr. Ashton',
-			'Following up on our meeting with Mr. Ashton, I wanted to recap the key points discussed and outline the action items moving forward. During the meeting, we touched upon the project timeline, budget considerations, and specific deliverables. Mr. Ashton expressed particular interest in our innovative solutions and requested a detailed proposal by next week. He emphasized the importance of maintaining regular communication and setting up bi-weekly progress reviews.',
-			moment().subtract(Math.floor(Math.random() * 30), 'days')
-		);
-		note1.attachments = [
-			{ fileName: 'Screenshot Information.png', thumbnail: 'https://picsum.photos/100/75', src: 'https://picsum.photos/1000/750' },
-			{ fileName: 'Important Information.png', thumbnail: 'https://picsum.photos/101/76', src: 'https://picsum.photos/1000/750' },
-			{ fileName: 'Some More Information.png', thumbnail: 'https://picsum.photos/102/77', src: 'https://picsum.photos/1000/750' },
-			{ fileName: 'Just Another Information.png', thumbnail: 'https://picsum.photos/103/78', src: 'https://picsum.photos/1000/750' },
-		];
-
-		const note2 = new Note(
-			'Setlist for Hackathon',
-			'- Project Timeline\n- Budget Considerations\n- Specific Deliverables\n- Additional Features for Software Solution\n- Detailed Proposal for Review\n- Prepare the PPT\n- Review by Ravi\n- GD\n- The Grand Finale',
-			moment().subtract(Math.floor(Math.random() * 30), 'days')
-		);
-		note2.date = moment().subtract(Math.floor(Math.random() * 30), 'days');
-
-		const note3 = new Note(
-			'Auroras and Sad Prose',
-			"In the twilight of northern skies,\nAuroras dance with gentle grace.\nWhile down below, a heart still cries,\nLonging words leave empty space.\n\nColors swirl in cosmic streams,\nNature's poetry in the night.\nReality blends into dreams,\nAs sadness turns to pure delight.",
-			moment().subtract(Math.floor(Math.random() * 30), 'days')
-		);
-
-		const note4 = new Note(
-			'Recipe: Classic Tiramisu',
-			'Ingredients:\n- 6 egg yolks\n- 1 cup sugar\n- 1¼ cup mascarpone cheese\n- 1¾ cup heavy whipping cream\n- 2 packages ladyfingers\n- 1 cup cold espresso\n- ½ cup coffee liqueur\n- 1 tbsp cocoa powder\n\nInstructions:\n1. Mix yolks & sugar\n2. Add mascarpone & whipped cream\n3. Dip ladyfingers in coffee mixture\n4. Layer & refrigerate overnight\n5. Dust with cocoa before serving',
-			moment().subtract(Math.floor(Math.random() * 30), 'days')
-		);
-
-		const note5 = new Note(
-			'Book Notes: The Psychology of Money',
-			'Key Takeaways:\n\n1. Wealth is hidden - it\'s the money not spent\n2. Compounding is about time, not returns\n3. Room for error is more important than returns\n4. Luck and risk are siblings\n5. Save money to gain control over time\n\nQuote: "Building wealth has little to do with your income or investment returns, and lots to do with your savings rate."',
-			moment().subtract(Math.floor(Math.random() * 30), 'days')
-		);
-		note5.attachments = [
-			{ fileName: 'The Psychology of Money.png', thumbnail: 'https://picsum.photos/104/79', src: 'https://picsum.photos/1000/750' },
-		];
-
-		const note6 = new Note(
-			'Garden Planning 2024',
-			'Spring Planting Schedule:\n\nMarch:\n- Start tomatoes indoors\n- Plant peas and spinach\n\nApril:\n- Plant potatoes\n- Start herbs\n\nMay:\n- Transfer tomatoes outside\n- Plant cucumbers and zucchini\n\nRemember to:\n- Check soil pH\n- Set up irrigation system\n- Order organic fertilizer',
-			moment().subtract(Math.floor(Math.random() * 30), 'days')
-		);
-
-		return [note1, note2, note3, note4, note5, note6];
-	}
+	onMounted(async () => {
+		notes.value = await notesService.fetchAllNotes();
+		console.log(notes.value);
+	});
 
 	function nextNote() {
 		swiperRef.value?.swiper?.slideNext();

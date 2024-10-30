@@ -1,0 +1,19 @@
+{
+	"tasksCount": {
+		"primary": {
+			"label": "Total Tasks",
+			"count": 12,
+			"color": "primary"
+		},
+		"secondary": {
+			"label": "Completed",
+			"count": 8,
+			"color": "secondary"
+		},
+		"accent": {
+			"label": "In Progress",
+			"count": 3,
+			"color": "accent"
+		}
+	}
+}

@@ -3,7 +3,14 @@
 	"editor.guides.bracketPairs": true,
 	"editor.formatOnSave": true,
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
-	"editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll", "source.fixAll.eslint"],
+	"editor.codeActionsOnSave": {
+		// "source.organizeImports": "explicit",
+		// "source.sortImports": "explicit",
+		"source.fixAll": "explicit",
+		"source.fixAll.eslint": "explicit",
+		"source.fixAll.ts": "explicit"
+	},
 	"eslint.validate": ["javascript", "javascriptreact", "typescript", "vue"],
-	"typescript.tsdk": "node_modules/typescript/lib"
+	"typescript.tsdk": "node_modules/typescript/lib",
+	"prettier.enable": true
 }

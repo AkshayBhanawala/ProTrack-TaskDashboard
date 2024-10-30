@@ -47,10 +47,11 @@
 </template>
 
 <script setup lang="ts">
-	import { useLeftSideBarState, useRightSideBarState } from 'src/stores/store';
 	import { ref } from 'vue';
-	import AccountInfoCard from './AccountInfoCard.vue';
-	import ToolTip from './ToolTip.vue';
+
+	import AccountInfoCard from '@/components/AccountInfoCard.component.vue';
+	import ToolTip from '@/components/ToolTip.component.vue';
+	import { useLeftSideBarState, useRightSideBarState } from '@/stores/store';
 
 	defineOptions({
 		name: 'HeaderMain',

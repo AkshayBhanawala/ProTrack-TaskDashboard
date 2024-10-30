@@ -15,7 +15,7 @@
 	</q-card>
 </template>
 <script setup lang="ts">
-	import ToolTip from './ToolTip.vue';
+	import ToolTip from '@/components/ToolTip.component.vue';
 
 	interface Props {
 		photoOnly?: boolean;

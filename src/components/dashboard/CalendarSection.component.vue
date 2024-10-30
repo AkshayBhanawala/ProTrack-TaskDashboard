@@ -32,45 +32,31 @@
 	</q-card>
 </template>
 <script setup lang="ts">
-	import moment, { Moment } from 'moment';
-	import { QCardSection } from 'quasar';
-	import { ref } from 'vue';
-	import ToolTip from '../ToolTip.vue';
+	import moment from 'moment';
+	import { onMounted, ref } from 'vue';
 
-	interface Props {
-		photoOnly?: boolean;
-		noBorder?: boolean;
-		noOnlineStatus?: boolean;
-	}
+	import ToolTip from '@/components/ToolTip.component.vue';
+	import { TaskCount } from 'src/models';
+	import { calendarService } from 'src/services';
 
-	defineOptions({
-		name: 'CalendarSection',
-		components: {
-			ToolTip,
-		},
+	const dates = ref(calendarService.getWeekDates());
+	const tasksCount = ref<{ [key: string]: TaskCount }>({});
+
+	onMounted(async () => {
+		try {
+			const data = await calendarService.fetchCalendarData();
+			tasksCount.value = data.tasksCount;
+		} catch (error) {
+			console.error('Failed to load calendar data:', error);
+		}
 	});
 
-	withDefaults(defineProps<Props>(), {});
-
-	const dates = ref<Moment[]>(getCurrentWeekDates());
-
-	function getCurrentWeekDates() {
-		const currentWeek = moment().week();
-		const startOfWeek = moment().week(currentWeek).startOf('isoWeek');
-		const endOfWeek = moment().week(currentWeek).endOf('isoWeek');
-		return Array.from({ length: endOfWeek.diff(startOfWeek, 'days') + 1 }, (_, i) => startOfWeek.clone().add(i, 'days'));
-	}
-
-	function isCurrentDate(date: Moment) {
-		return date.isSame(moment(), 'day');
+	function isCurrentDate(date: moment.Moment): boolean {
+		return date.format('YYYY-MM-DD') === moment().format('YYYY-MM-DD');
 	}
 
 	function getTasksCountData() {
-		return {
-			toDo: { label: 'To Do', count: 20, color: 'primary' },
-			inProgress: { label: 'In-Progress', count: 15, color: 'secondary' },
-			completed: { label: 'Completed', count: 3, color: 'accent' },
-		};
+		return tasksCount.value;
 	}
 </script>
 <style scoped lang="scss">
