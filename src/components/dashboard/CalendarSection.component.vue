@@ -3,7 +3,7 @@
 		<q-card-section vertical class="row justify-between items-center q-pt-lg">
 			<span class="header2 title">Calendar</span>
 			<q-btn outline dense rounded icon="sym_r_arrow_forward_ios" class="color-secondary next-btn">
-				<ToolTip text="Next Week" />
+				<ToolTip text="Next Day" />
 			</q-btn>
 		</q-card-section>
 		<q-card-section horizontal class="calendar-date-cards">
@@ -22,43 +22,43 @@
 			</q-btn>
 		</q-card-section>
 		<q-card-section horizontal class="note-cards">
-			<q-card v-for="(v, k, index) in getTasksCountData()" :key="index" :color="v.color" class="tasks-count-card" outline>
+			<q-card v-for="(v, k, index) in tasksCount" :key="index" :color="taskCountTypeColorMap[k]" class="tasks-count-card" outline>
 				<div class="task-count">
-					<span class="label">{{ v.label }}</span>
-					<span class="count">{{ v.count.toString().length === 1 ? `0${v.count}` : v.count }}</span>
+					<span class="label">{{ taskCountTypeLabelMap[k] }}</span>
+					<span class="count">{{ v?.toString()?.length === 1 ? `0${v}` : v }}</span>
 				</div>
 			</q-card>
 		</q-card-section>
 	</q-card>
 </template>
+
 <script setup lang="ts">
-	import moment from 'moment';
-	import { onMounted, ref } from 'vue';
+	import moment, { Moment } from 'moment';
+	import { computed } from 'vue';
 
 	import ToolTip from '@/components/ToolTip.component.vue';
-	import { TaskCount } from 'src/models';
-	import { calendarService } from 'src/services';
+	import { useBiWeeklyTasksStore } from '@/stores/store';
+	import { TaskCount, TaskCountType, taskCountTypeColorMap, taskCountTypeLabelMap } from 'src/models';
 
-	const dates = ref(calendarService.getWeekDates());
-	const tasksCount = ref<{ [key: string]: TaskCount }>({});
+	const byWeeklyTasksStore = useBiWeeklyTasksStore();
 
-	onMounted(async () => {
-		try {
-			const data = await calendarService.fetchCalendarData();
-			tasksCount.value = data.tasksCount;
-		} catch (error) {
-			console.error('Failed to load calendar data:', error);
-		}
+	const dates = computed(() => byWeeklyTasksStore.getThisWeekDates);
+	const tasksCount = computed((): Partial<TaskCount> => {
+		const typeOfCountsToShow = [TaskCountType.TO_DO, TaskCountType.COMPLETED, TaskCountType.IN_PROGRESS];
+		const counts: Partial<TaskCount> = {};
+		Object.keys(byWeeklyTasksStore.getTasksCountData).forEach((taskCountType) => {
+			if (typeOfCountsToShow.includes(taskCountType as TaskCountType)) {
+				counts[taskCountType] = byWeeklyTasksStore.getTasksCountData[taskCountType as TaskCountType];
+			}
+		});
+		return counts;
 	});
 
-	function isCurrentDate(date: moment.Moment): boolean {
-		return date.format('YYYY-MM-DD') === moment().format('YYYY-MM-DD');
-	}
-
-	function getTasksCountData() {
-		return tasksCount.value;
+	function isCurrentDate(date: Moment): boolean {
+		return date.isSame(moment(), 'date');
 	}
 </script>
+
 <style scoped lang="scss">
 	.calendar-section {
 		display: flex;

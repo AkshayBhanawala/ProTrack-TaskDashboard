@@ -10,9 +10,9 @@
 		<q-card-section horizontal class="full-height">
 			<q-card-section class="stats">
 				<span class="completed">
-					<span class="count">20</span>
+					<span class="count">{{ thisWeekCompletedCount }}</span>
 					<span class="change small text-bold">
-						<span v-if="changePercent > 0" class="positive">
+						<span v-if="changePercent >= 0" class="positive">
 							<q-icon class="arrow" name="sym_r_arrow_drop_up" />
 							<span>+{{ changePercent }}%</span>
 						</span>
@@ -28,7 +28,7 @@
 				</div>
 
 				<div class="change-status text-bold q-mt-sm">
-					<span v-if="changePercent > 0" class="positive">
+					<span v-if="changePercent >= 0" class="positive">
 						<q-icon class="icon" name="sym_r_check_circle" />
 						<span>On track</span>
 					</span>
@@ -65,12 +65,13 @@
 <script setup lang="ts">
 	import { ApexOptions } from 'apexcharts';
 	import { QCardSection } from 'quasar';
-	import { onMounted, ref, useTemplateRef } from 'vue';
+	import { computed, ref, useTemplateRef } from 'vue';
 	import { VueApexChartsComponent } from 'vue3-apexcharts';
 
 	import ToolTip from '@/components/ToolTip.component.vue';
-	import { ApexChartEvents, ChartSeries, getChartOptions } from '@/models/WeeklyOverview.model';
-	import { weeklyOverviewService } from '@/services';
+	import { DailyTotal, TaskCountType } from '@/models';
+	import { ApexChartEvents, ChartSeries, ChartOptions, WeeklyOverviewData, ChartData } from '@/models/WeeklyOverview.model';
+	import { useBiWeeklyTasksStore } from '@/stores/store';
 
 	interface Props {
 		photoOnly?: boolean;
@@ -87,58 +88,112 @@
 
 	withDefaults(defineProps<Props>(), {});
 
-	const changePercent = ref(0);
 	const graphRef = useTemplateRef<QCardSection>('graphRef');
 	const apexChartRef = useTemplateRef<VueApexChartsComponent>('apexChartRef');
 	const graphBorderStyle = ref({});
-	const chartSeries = ref<ChartSeries[]>([]);
 	const chartOptions = ref<ApexOptions>();
+	const biWeeklyTasksStore = useBiWeeklyTasksStore();
 
 	const chartEvents: ApexChartEvents = {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		mounted: function (chartContext, config: ApexOptions) {
-			console.log('mounted:', chartContext, config);
+			// console.log('mounted:', chartContext, config);
 			updateGraphBorderStyle(chartContext);
 		},
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		updated: function (chartContext, config: ApexOptions) {
-			console.log('updated:', chartContext, config);
+			// console.log('updated:', chartContext, config);
 			updateGraphBorderStyle(chartContext);
 		},
 	};
-	chartOptions.value = getChartOptions.line(chartEvents);
+	chartOptions.value = ChartOptions.line(chartEvents);
 
-	onMounted(async () => {
-		try {
-			const data = await weeklyOverviewService.fetchWeeklyOverview();
-			changePercent.value = getChangePercent(data.series);
-			// Update chart data
-			const yAxisMax: ApexOptions = {
-				yaxis: { max: getMaxYAxisValue(data.series) },
+	const totalTaskCounts = computed((): DailyTotal => {
+		return {
+			[TaskCountType.THIS_WEEK_DAILY_TOTAL]: biWeeklyTasksStore.getTasksCountData[TaskCountType.THIS_WEEK_DAILY_TOTAL],
+			[TaskCountType.LAST_WEEK_DAILY_TOTAL]: biWeeklyTasksStore.getTasksCountData[TaskCountType.LAST_WEEK_DAILY_TOTAL],
+		};
+	});
+
+	const weeklyOverviewData = computed((): WeeklyOverviewData => {
+		return biWeeklyTasksStore.getWeeklyOverviewData;
+	});
+
+	const chartSeries = computed((): ChartSeries[] => {
+		const charSeries = getWeeklyOverviewSeries(weeklyOverviewData.value);
+		console.log('charSeries', charSeries);
+		updateChartOptions(charSeries);
+		// apexChartRef.value?.updateSeries(series);
+		return charSeries;
+	});
+
+	const thisWeekCompletedCount = computed((): number => {
+		const todayDay = new Date().getDay() - 1;
+		let thisWeekCompletedCount = 0;
+		for (let i = 0; i <= todayDay; i++) {
+			thisWeekCompletedCount += weeklyOverviewData.value.thisWeek[i];
+		}
+		return thisWeekCompletedCount;
+	});
+
+	const changePercent = computed((): number => {
+		if (!(weeklyOverviewData?.value?.lastWeek?.length && weeklyOverviewData?.value?.thisWeek?.length)) {
+			return 0;
+		}
+		const thisWeekCounts = countsTillThisWeekDay(totalTaskCounts.value[TaskCountType.THIS_WEEK_DAILY_TOTAL], weeklyOverviewData.value.thisWeek);
+		const lastWeekCounts = countsTillThisWeekDay(totalTaskCounts.value[TaskCountType.LAST_WEEK_DAILY_TOTAL], weeklyOverviewData.value.lastWeek);
+
+		const lastWeekCompletePercent = getCompletePercent(lastWeekCounts);
+		const thisWeekCompletePercent = getCompletePercent(thisWeekCounts);
+
+		return Number((((thisWeekCompletePercent - lastWeekCompletePercent) / lastWeekCompletePercent) * 100).toFixed(2));
+
+		function countsTillThisWeekDay(totalCounts: number[], chartData: ChartData): { total: number; completed: number } {
+			const todayDay = new Date().getDay() - 1; // Between 0-5 (monday-saturday)
+			const counts = {
+				total: 0,
+				completed: 0,
 			};
-			chartOptions.value = getChartOptions.line(chartEvents, yAxisMax);
-			chartSeries.value = data.series;
-
-			// apexChartRef.value?.updateOptions(chartOptions.value);
-			// apexChartRef.value?.updateSeries(data.series);
-		} catch (error) {
-			console.error('Failed to load weekly overview:', error);
+			for (let i = 0; i <= todayDay; i++) {
+				counts.total += totalCounts[i];
+				counts.completed += chartData[i];
+			}
+			return counts;
+		}
+		function getCompletePercent(counts: { total: number; completed: number }): number {
+			return (counts.completed / counts.total) * 100;
 		}
 	});
 
-	function getChangePercent(chartSeries: ChartSeries[]): number {
-		const todayDay = new Date().getDay() - 1; // 0-5 (monday-saturday)
-		let thisWeekCompletedCount = 0;
-		for (let i = 0; i <= todayDay; i++) {
-			thisWeekCompletedCount += chartSeries[0].data[i];
+	function getWeeklyOverviewSeries(weeklyOverviewData: WeeklyOverviewData): ChartSeries[] {
+		if (!weeklyOverviewData?.thisWeek?.length || !weeklyOverviewData?.lastWeek?.length) {
+			return [];
 		}
-		let lastWeekCompletedCount = 0;
-		for (let i = 0; i <= todayDay; i++) {
-			lastWeekCompletedCount += chartSeries[1].data[i];
+		const lastIndexOfValue = weeklyOverviewData.thisWeek.map((item) => item > 0).lastIndexOf(true);
+		let thisWeekData;
+		if (lastIndexOfValue === -1 || lastIndexOfValue === weeklyOverviewData.thisWeek.length - 1) {
+			thisWeekData = weeklyOverviewData.thisWeek;
+		} else {
+			thisWeekData = weeklyOverviewData.thisWeek.slice(0, lastIndexOfValue + 1);
 		}
-		return Number(((thisWeekCompletedCount / lastWeekCompletedCount) * 100).toFixed(2));
+		return [
+			{ name: 'Last Week', data: weeklyOverviewData.lastWeek }, // "Last Week" on index 0 'cause it'll go in the background of "This Week" chart
+			{ name: 'This Week', data: thisWeekData },
+		];
+	}
+
+	function updateChartOptions(chartSeries: ChartSeries[]): void {
+		setTimeout(() => {
+			const yAxisMax: ApexOptions = {
+				yaxis: { max: getMaxYAxisValue(chartSeries) },
+			};
+			// chartOptions.value = ChartOptions.line(chartEvents, yAxisMax);
+			apexChartRef.value?.updateOptions(ChartOptions.line(chartEvents, yAxisMax), true, true, true);
+		}, 0);
 	}
 
 	function getMaxYAxisValue(chartSeries: ChartSeries[]): number {
-		return Math.max(...chartSeries.flatMap((item) => item.data).filter((i) => i)) + 5;
+		return Math.max(...chartSeries.flatMap((item) => item.data).filter((i) => i)) + 2;
 	}
 
 	function updateGraphBorderStyle(apexChartContext): void {

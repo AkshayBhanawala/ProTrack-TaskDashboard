@@ -20,6 +20,7 @@
 			<div class="upgrade-to-pro-wrapper">
 				<div class="decorative-logo">
 					<img src="images/logo-mono-white.svg" alt="Avatar" />
+					<ToolTip text="Refresh Data" />
 				</div>
 				<div class="header3">Upgrade to PRO</div>
 				<div>
@@ -37,13 +38,18 @@
 <script setup lang="ts">
 	import { ref } from 'vue';
 
+	import ToolTip from './ToolTip.component.vue';
+
 	import AccountInfoCard from '@/components/AccountInfoCard.component.vue';
 
 	defineOptions({
 		name: 'MenuSideBar',
+		components: {
+			ToolTip,
+		},
 	});
 
-	const tab = ref('mails');
+	const tab = ref('Home');
 </script>
 
 <style scoped lang="scss">

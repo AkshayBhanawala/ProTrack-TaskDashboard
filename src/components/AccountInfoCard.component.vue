@@ -9,13 +9,21 @@
 				<div class="account-type color-subtext">Free Account</div>
 			</q-card-section>
 			<q-card-actions horizontal class="justify-around q-px-md" v-if="!photoOnly">
-				<q-btn flat round icon="sym_r_settings"><ToolTip text="Settings" /></q-btn>
+				<q-fab flat round external-label padding="sm" label-position="bottom" direction="up" icon="sym_r_settings" label="Settings">
+					<q-fab-action color="secondary" external-label icon="sym_r_change_circle" label="New Data" label-position="top" @click="newData()" />
+				</q-fab>
+				<!-- <q-btn flat round icon="sym_r_settings"></q-btn> -->
 			</q-card-actions>
 		</q-card-section>
 	</q-card>
 </template>
+
 <script setup lang="ts">
+	import { EventBus } from 'quasar';
+	import { inject } from 'vue';
+
 	import ToolTip from '@/components/ToolTip.component.vue';
+	import { LocalStorageUtil } from '@/utils/localStorage.util';
 
 	interface Props {
 		photoOnly?: boolean;
@@ -29,8 +37,17 @@
 			ToolTip,
 		},
 	});
+
 	withDefaults(defineProps<Props>(), {});
+
+	const bus = inject<EventBus>('bus');
+
+	function newData() {
+		LocalStorageUtil.clear();
+		bus?.emit('newData');
+	}
 </script>
+
 <style scoped lang="scss">
 	.user-account-card {
 		border-radius: 10px;
@@ -56,7 +73,7 @@
 				}
 			}
 
-			* {
+			> * {
 				padding: 0px;
 			}
 		}

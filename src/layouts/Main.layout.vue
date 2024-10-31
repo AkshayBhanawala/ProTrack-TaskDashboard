@@ -46,7 +46,7 @@
 	import FooterMain from '@/components/FooterMain.component.vue';
 	import HeaderMain from '@/components/HeaderMain.component.vue';
 	import MenuSideBar from '@/components/MenuSideBar.component.vue';
-	import { useLeftSideBarState, useRightSideBarState } from 'src/stores/store';
+	import { useLeftSideBarStore, useRightSideBarStore } from 'src/stores/store';
 
 	defineOptions({
 		name: 'MainLayout',
@@ -57,8 +57,8 @@
 		},
 	});
 
-	const leftSideBarState = useLeftSideBarState();
-	const rightSideBarState = useRightSideBarState();
+	const leftSideBarState = useLeftSideBarStore();
+	const rightSideBarState = useRightSideBarStore();
 </script>
 
 <style scoped lang="scss">

@@ -15,16 +15,16 @@
 	}
 
 	defineOptions({
-		name: 'AccountInfoCard',
+		name: 'ToolTip',
 	});
 	withDefaults(defineProps<Props>(), {});
 
 	const slots = useSlots();
 </script>
 <style scoped lang="scss">
-	.tooltip-wrapper {
-		.tooltip-text {
-			//
-		}
-	}
+	// .tooltip-wrapper {
+	// 	.tooltip-text {
+	// 		//
+	// 	}
+	// }
 </style>

@@ -31,6 +31,7 @@
 								:index="j"
 								:class="{ 'text-strike color-primary': subtask.isCompleted }"
 								v-model="subtask.isCompleted"
+								@vue:updated="task.checkCompleted()"
 								dense
 								color="primary"
 							/>
@@ -61,13 +62,14 @@
 		</q-card-section>
 	</q-card>
 </template>
+
 <script setup lang="ts">
 	import { QCardSection } from 'quasar';
-	import { onMounted, ref } from 'vue';
+	import { computed } from 'vue';
 
 	import ToolTip from '@/components/ToolTip.component.vue';
-	import { PartialTaskStatus, Task } from '@/models';
-	import { taskService } from '@/services';
+	import { PartialTaskStatus } from '@/models';
+	import { useBiWeeklyTasksStore } from '@/stores/store';
 
 	interface Props {
 		photoOnly?: boolean;
@@ -84,12 +86,13 @@
 
 	withDefaults(defineProps<Props>(), {});
 
-	const tasks = ref<Task[]>([]);
+	const biWeeklyTaskStore = useBiWeeklyTasksStore();
 
-	onMounted(async () => {
-		tasks.value = await taskService.fetchTasks();
+	const tasks = computed(() => {
+		return biWeeklyTaskStore.getTaskForTheDayData;
 	});
 </script>
+
 <style scoped lang="scss">
 	.notes-section {
 		display: flex;

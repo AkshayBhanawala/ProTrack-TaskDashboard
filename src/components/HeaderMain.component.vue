@@ -51,7 +51,7 @@
 
 	import AccountInfoCard from '@/components/AccountInfoCard.component.vue';
 	import ToolTip from '@/components/ToolTip.component.vue';
-	import { useLeftSideBarState, useRightSideBarState } from '@/stores/store';
+	import { useLeftSideBarStore, useRightSideBarStore } from '@/stores/store';
 
 	defineOptions({
 		name: 'HeaderMain',
@@ -62,8 +62,8 @@
 	});
 
 	const searchText = ref('');
-	const leftSideBarState = useLeftSideBarState();
-	const rightSideBarState = useRightSideBarState();
+	const leftSideBarState = useLeftSideBarStore();
+	const rightSideBarState = useRightSideBarStore();
 </script>
 
 <style scoped lang="scss">

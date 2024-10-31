@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 import { ITask, Task, BiWeeklyTasks } from './Task.model';
-import { TagName } from './TaskTag.model';
+import { TagName, tags } from './TaskTag.model';
 
 export function getBiWeeklyTasks(): Promise<BiWeeklyTasks> {
 	const lastWeekStart = moment().subtract(1, 'week').startOf('week');
@@ -13,22 +13,23 @@ export function getBiWeeklyTasks(): Promise<BiWeeklyTasks> {
 				thisWeek: generateWeek(thisWeekStart)
 			});
 		}, 0);
-	})
+	});
 
 	function getRandomTasks(date: moment.Moment): Task[] {
-		const numTasks = Math.floor(Math.random() * 8); // 0 to 7 tasks
+		const numTasks = Math.floor(Math.random() * 5) + 3; // 3 to 13 tasks
 		const shuffledTasks = [...masterTasksList].sort(() => Math.random() - 0.5);
-
+		const isFutureDate = date.isAfter(moment(), 'date');
 		return shuffledTasks
 			.slice(0, numTasks)
 			.map(task => new Task(
 				task.label,
-				Math.random() > 0.5,
+				isFutureDate ? false : Math.random() > 0.5,
 				date.clone(),
 				task.subtasks?.map(subtask => ({
 					...subtask,
-					isCompleted: Math.random() > 0.5
-				}))
+					isCompleted: isFutureDate ? false : Math.random() > 0.5
+				})),
+				task.tags?.map(tagName => tags[tagName])
 			));
 	};
 
@@ -36,6 +37,7 @@ export function getBiWeeklyTasks(): Promise<BiWeeklyTasks> {
 		const weekTasks: { [key: string]: Task[] } = {};
 
 		Array.from({ length: 7 }).forEach((_, index) => {
+			if (index === 0) return;
 			const date = startDate.clone().add(index, 'days');
 			const dateKey = date.format('YYYY-MM-DD');
 			weekTasks[dateKey] = getRandomTasks(date);

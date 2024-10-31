@@ -1,7 +1,18 @@
+import moment from 'moment';
+
+import { BaseTask, BiWeeklyTasks, IBiWeeklyTasks, INote, ITask, Note, Tag, Task, TaskStatus } from '@/models';
+
 export interface StorageItem<T> {
 	value: T;
 	timestamp: number;
 	expiry?: number; // expiry in milliseconds
+}
+
+export enum LocalStorageKeys {
+	BiWeeklyTasks = 'biWeeklyTasks',
+	Notes = 'Notes',
+	RightSideBarState = 'RightSideBarState',
+	LeftSideBarState = 'LeftSideBarState',
 }
 
 export class LocalStorageUtil {
@@ -31,6 +42,12 @@ export class LocalStorageUtil {
 				return null;
 			}
 
+			switch (key) {
+				case LocalStorageKeys.BiWeeklyTasks:
+					return convertStoredTasks(parsedItem.value as IBiWeeklyTasks<Tag>) as T;
+				case LocalStorageKeys.Notes:
+					return convertStoredNotes(parsedItem.value as INote[]) as T;
+			}
 			return parsedItem.value;
 		} catch (error) {
 			console.error('Error reading from localStorage:', error);
@@ -94,3 +111,55 @@ export const STORAGE_KEYS = {
 } as const;
 
 export type StorageKeys = typeof STORAGE_KEYS[keyof typeof STORAGE_KEYS];
+
+function convertStoredTasks(storedTasks: IBiWeeklyTasks<Tag>): BiWeeklyTasks {
+	return {
+		lastWeek: convertWeekTasks(storedTasks.lastWeek),
+		thisWeek: convertWeekTasks(storedTasks.thisWeek)
+	};
+
+	function convertTaskArray(tasks: ITask<TaskStatus, Tag>[]): Task[] {
+		return tasks.map(taskData => {
+			const task = new Task(
+				taskData.label,
+				taskData.isCompleted,
+				taskData.date ? moment(taskData.date) : undefined
+			);
+
+			if (taskData.subtasks?.length) {
+				task.subtasks = taskData.subtasks.map(subtask =>
+					new BaseTask<boolean>(
+						subtask.label,
+						subtask.isCompleted,
+						subtask.date ? moment(subtask.date) : undefined
+					)
+				);
+			}
+
+			task.tags = taskData?.tags || [];
+
+			return task;
+		});
+	};
+
+	function convertWeekTasks(weekTasks: { [key: string]: ITask<TaskStatus, Tag>[] } = {}) {
+		const converted: { [key: string]: Task[] } = {};
+		Object.entries(weekTasks).forEach(([date, tasks]) => {
+			converted[date] = convertTaskArray(tasks);
+		});
+		return converted;
+	};
+}
+
+function convertStoredNotes(storedNotes: INote[]): Note[] {
+	return storedNotes.map(noteData => {
+		const note = new Note(
+			noteData.title,
+			noteData.content,
+			moment(noteData.date),
+			noteData.attachments
+		);
+
+		return note;
+	});
+}

@@ -2,7 +2,7 @@
 	<main class="container">
 		<q-splitter v-model="mainSplitter" class="left-splitter" separator-style="opacity: 0">
 			<template v-slot:before>
-				<q-splitter horizontal v-model="leftSplitter" class="left-splitter" style="height: calc(100vh - 100px)" :limits="[65, 480]" unit="px">
+				<q-splitter horizontal v-model="leftSplitter" class="left-splitter" :limits="[65, 480]" unit="px">
 					<template v-slot:before>
 						<div class="greetings">
 							<p class="header3">Welcome Back!</p>
@@ -18,7 +18,7 @@
 			</template>
 
 			<template v-slot:after>
-				<q-splitter horizontal v-model="rightSplitter" class="right-splitter" style="height: calc(100vh - 100px)" :limits="[0, 380]" unit="px">
+				<q-splitter horizontal v-model="rightSplitter" class="right-splitter" :limits="[0, 380]" unit="px">
 					<template v-slot:before>
 						<CalendarSection />
 					</template>
@@ -33,14 +33,15 @@
 </template>
 
 <script setup lang="ts">
-	import { onMounted, ref } from 'vue';
+	import { EventBus } from 'quasar';
+	import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue';
 
 	import CalendarSection from '@/components/dashboard/CalendarSection.component.vue';
 	import NotesSection from '@/components/dashboard/NotesSection.component.vue';
 	import TaskForTheDaySection from '@/components/dashboard/TaskForTheDaySection.component.vue';
 	import WeeklyOverviewCard from '@/components/dashboard/WeeklyOverviewCard.component.vue';
 	import { getBiWeeklyTasks } from '@/models/_MasterTasksList';
-	import { useBiWeeklyTasks } from '@/stores/store';
+	import { useBiWeeklyTasksStore } from '@/stores/store';
 
 	interface Props {
 		photoOnly?: boolean;
@@ -64,10 +65,31 @@
 	const leftSplitter = ref(480);
 	const rightSplitter = ref(380);
 
+	const biWeeklyTaskStore = useBiWeeklyTasksStore();
+	const biWeeklyTasks = computed(() => {
+		return biWeeklyTaskStore.biWeeklyTasks;
+	});
+
+	const bus = inject<EventBus>('bus');
+
 	onMounted(() => {
-		getBiWeeklyTasks().then((biWeeklyTasks) => {
-			useBiWeeklyTasks().setBiWeeklyTasks(biWeeklyTasks);
+		if (!biWeeklyTasks.value?.lastWeek || !biWeeklyTasks.value?.thisWeek) {
+			setNewData();
+		}
+		console.log('biWeeklyTasks:', biWeeklyTasks.value);
+		bus?.on('newData', () => {
+			setNewData();
 		});
+
+		function setNewData() {
+			getBiWeeklyTasks().then((biWeeklyTasks) => {
+				biWeeklyTaskStore.setBiWeeklyTasks(biWeeklyTasks);
+			});
+		}
+	});
+
+	onBeforeUnmount(() => {
+		bus?.off('newData');
 	});
 </script>
 

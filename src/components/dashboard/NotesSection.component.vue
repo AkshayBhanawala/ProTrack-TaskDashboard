@@ -59,13 +59,14 @@
 		</swiper-container>
 	</q-card>
 </template>
+
 <script setup lang="ts">
 	import { QCardSection } from 'quasar';
 	import { register, SwiperContainer } from 'swiper/element/bundle';
-	import { onMounted, ref } from 'vue';
+	import { computed, onMounted, ref } from 'vue';
 
 	import ToolTip from '@/components/ToolTip.component.vue';
-	import { Note } from '@/models';
+	import { useNotesStore } from '@/stores/store';
 	import { notesService } from 'src/services';
 
 	register();
@@ -85,18 +86,26 @@
 		noOnlineStatus?: boolean;
 	}
 
-	const notes = ref<Note[]>([]);
 	const swiperRef = ref<SwiperContainer>();
 
+	const notesStore = useNotesStore();
+	const notes = computed(() => {
+		if (notesStore?.notes?.length) {
+			return notesStore.notes;
+		}
+		return [];
+	});
+
 	onMounted(async () => {
-		notes.value = await notesService.fetchAllNotes();
-		console.log(notes.value);
+		const serviceNotes = await notesService.fetchAllNotes();
+		notesStore.setNotes(serviceNotes);
 	});
 
 	function nextNote() {
 		swiperRef.value?.swiper?.slideNext();
 	}
 </script>
+
 <style lang="scss">
 	swiper-container {
 		width: 100%;
@@ -266,6 +275,7 @@
 							height: 30px;
 							width: 30px;
 							border-radius: 10px;
+							padding: 0;
 
 							&.q-btn--outline:before {
 								border-width: 2px;

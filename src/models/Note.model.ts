@@ -5,6 +5,12 @@ export interface Attachment {
 	thumbnail: string;
 	src: string;
 }
+export interface INote {
+	title: string;
+	content: string;
+	date?: Moment | string;
+	attachments?: Attachment[];
+}
 
 export class Note {
 	title: string;

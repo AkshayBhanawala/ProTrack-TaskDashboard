@@ -1,19 +1,7 @@
 {
 	"tasksCount": {
-		"primary": {
-			"label": "Total Tasks",
-			"count": 12,
-			"color": "primary"
-		},
-		"secondary": {
-			"label": "Completed",
-			"count": 8,
-			"color": "secondary"
-		},
-		"accent": {
-			"label": "In Progress",
-			"count": 3,
-			"color": "accent"
-		}
+		"TO_DO": 12,
+		"IN_PROGRESS": 3,
+		"COMPLETED": 8
 	}
 }

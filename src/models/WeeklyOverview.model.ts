@@ -15,7 +15,7 @@ const baseChartOptions: ApexOptions = {
 		},
 		dropShadow: {
 			enabled: true,
-			enabledOnSeries: [0],
+			enabledOnSeries: [1],
 			top: 20,
 			left: 0,
 			blur: 15,
@@ -25,11 +25,12 @@ const baseChartOptions: ApexOptions = {
 		toolbar: { show: false },
 		events: {},
 	},
-	colors: [getCssVar('tertiary'), getCssVar('primary')],
+	colors: [getCssVar('primary'), getCssVar('tertiary')],
 	// fill: { opacity: 0.8, type: 'solid' },
 	stroke: {
 		show: true,
-		curve: 'monotoneCubic',
+		// curve: 'monotoneCubic',
+		curve: 'smooth',
 		lineCap: 'round',
 		colors: undefined,
 		width: 7,
@@ -64,13 +65,13 @@ const baseChartOptions: ApexOptions = {
 	yaxis: {
 		show: false,
 		forceNiceScale: true,
-		min: 0,
+		min: -1,
 		axisBorder: { show: false },
 		axisTicks: { show: false },
 		crosshairs: { show: false },
 		tooltip: { enabled: false },
 	},
-	legend: { show: false },
+	legend: { show: true, position: 'top', offsetY: 10 },
 };
 
 const lineChartOptions: ApexOptions = extend(true, {}, baseChartOptions, { chart: { type: 'line' } });
@@ -85,7 +86,7 @@ const barChartOptions: ApexOptions = extend(
 
 export type ApexChartEvents = ApexChart['events'];
 
-export const getChartOptions = {
+export const ChartOptions = {
 	line: (events: ApexChartEvents, ...moreOptions: ApexOptions[]): ApexOptions =>
 		extend(true, {}, lineChartOptions, { chart: { events } }, ...moreOptions),
 
@@ -93,9 +94,12 @@ export const getChartOptions = {
 		extend(true, {}, barChartOptions, { chart: { events } }, ...moreOptions),
 };
 
+export type ChartData = number[];
+export type WeeklyOverviewData = { lastWeek: ChartData, thisWeek: ChartData };
+
 export interface ChartSeries {
 	name: string;
-	data: number[];
+	data: ChartData;
 }
 
 export type WeeklyOverviewSeries = { series: ChartSeries[] };

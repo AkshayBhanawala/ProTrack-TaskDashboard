@@ -24,7 +24,8 @@ module.exports = configure(function (/* ctx */) {
 		boot: [
 			'i18n',
 			'axios',
-			'apex-charts'
+			'apex-charts',
+			'global-bus'
 		],
 
 		// https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
