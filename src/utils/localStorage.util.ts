@@ -13,6 +13,7 @@ export enum LocalStorageKeys {
 	Notes = 'Notes',
 	RightSideBarState = 'RightSideBarState',
 	LeftSideBarState = 'LeftSideBarState',
+	SelectedDate = 'SelectedDate',
 }
 
 export class LocalStorageUtil {

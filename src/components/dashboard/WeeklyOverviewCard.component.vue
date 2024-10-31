@@ -121,8 +121,6 @@
 
 	const chartSeries = computed((): ChartSeries[] => {
 		const charSeries = getWeeklyOverviewSeries(weeklyOverviewData.value);
-		console.log('charSeries', charSeries);
-		updateChartOptions(charSeries);
 		// apexChartRef.value?.updateSeries(series);
 		return charSeries;
 	});
@@ -177,23 +175,23 @@
 			thisWeekData = weeklyOverviewData.thisWeek.slice(0, lastIndexOfValue + 1);
 		}
 		return [
-			{ name: 'Last Week', data: weeklyOverviewData.lastWeek }, // "Last Week" on index 0 'cause it'll go in the background of "This Week" chart
-			{ name: 'This Week', data: thisWeekData },
+			{
+				name: 'Last Week',
+				data: getDailyPercentages(weeklyOverviewData.lastWeek, totalTaskCounts.value[TaskCountType.LAST_WEEK_DAILY_TOTAL]),
+				value: weeklyOverviewData.lastWeek,
+				outOf: totalTaskCounts.value[TaskCountType.LAST_WEEK_DAILY_TOTAL],
+			}, // "Last Week" on index 0 'cause it'll go in the background of "This Week" chart
+			{
+				name: 'This Week',
+				data: getDailyPercentages(thisWeekData, totalTaskCounts.value[TaskCountType.THIS_WEEK_DAILY_TOTAL]),
+				value: thisWeekData,
+				outOf: totalTaskCounts.value[TaskCountType.THIS_WEEK_DAILY_TOTAL],
+			},
 		];
-	}
 
-	function updateChartOptions(chartSeries: ChartSeries[]): void {
-		setTimeout(() => {
-			const yAxisMax: ApexOptions = {
-				yaxis: { max: getMaxYAxisValue(chartSeries) },
-			};
-			// chartOptions.value = ChartOptions.line(chartEvents, yAxisMax);
-			apexChartRef.value?.updateOptions(ChartOptions.line(chartEvents, yAxisMax), true, true, true);
-		}, 0);
-	}
-
-	function getMaxYAxisValue(chartSeries: ChartSeries[]): number {
-		return Math.max(...chartSeries.flatMap((item) => item.data).filter((i) => i)) + 2;
+		function getDailyPercentages(completedTaskCounts: ChartData, totalTaskCounts: ChartData): ChartData {
+			return completedTaskCounts.map((item, index) => (item > 0 ? (item / totalTaskCounts[index]) * 100 : 0));
+		}
 	}
 
 	function updateGraphBorderStyle(apexChartContext): void {
@@ -332,7 +330,7 @@
 						justify-content: center;
 						align-items: center;
 						position: relative;
-						padding: 0px 25px;
+						padding: 0px 15px;
 						overflow: visible;
 						border-radius: 7px;
 

@@ -6,9 +6,14 @@
 				<q-btn unelevated dense rounded icon="sym_r_add" class="color-primary add-btn">
 					<ToolTip text="Add Task" />
 				</q-btn>
-				<q-btn outline dense rounded icon="sym_r_arrow_forward_ios" class="color-secondary next-btn">
-					<ToolTip text="Next Day" />
-				</q-btn>
+				<div class="group">
+					<q-btn outline dense rounded icon="sym_r_arrow_back_ios_new" class="color-secondary previous-btn" @click="selectedDayStore.previousDay()">
+						<ToolTip text="Previous Day" />
+					</q-btn>
+					<q-btn outline dense rounded icon="sym_r_arrow_forward_ios" class="color-secondary next-btn" @click="selectedDayStore.nextDay()">
+						<ToolTip text="Next Day" />
+					</q-btn>
+				</div>
 			</div>
 		</q-card-section>
 		<q-card-section vertical class="note-cards">
@@ -69,7 +74,7 @@
 
 	import ToolTip from '@/components/ToolTip.component.vue';
 	import { PartialTaskStatus } from '@/models';
-	import { useBiWeeklyTasksStore } from '@/stores/store';
+	import { useBiWeeklyTasksStore, useSelectedDayStore } from '@/stores/store';
 
 	interface Props {
 		photoOnly?: boolean;
@@ -87,6 +92,7 @@
 	withDefaults(defineProps<Props>(), {});
 
 	const biWeeklyTaskStore = useBiWeeklyTasksStore();
+	const selectedDayStore = useSelectedDayStore();
 
 	const tasks = computed(() => {
 		return biWeeklyTaskStore.getTaskForTheDayData;
@@ -110,10 +116,19 @@
 		}
 
 		.header-actions {
-			display: flex;
-			gap: 15px;
+			&,
+			> .group {
+				display: flex;
+				gap: 15px;
+				margin-left: auto;
+			}
 
+			&.group,
+			> .group {
+				gap: 7.5px;
+			}
 			.add-btn,
+			.previous-btn,
 			.next-btn {
 				width: 36px;
 				height: 36px;

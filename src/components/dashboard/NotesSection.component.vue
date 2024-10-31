@@ -146,6 +146,7 @@
 		.header-actions {
 			display: flex;
 			gap: 15px;
+			margin-left: auto;
 
 			.add-btn,
 			.next-btn {

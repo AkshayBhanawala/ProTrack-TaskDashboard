@@ -43,7 +43,17 @@ const baseChartOptions: ApexOptions = {
 		// intersect: false,
 		onDatasetHover: { highlightDataSeries: true },
 		x: { show: false },
-		y: { title: { formatter: () => '' } },
+		y: {
+			formatter: (seriesValue, { seriesIndex, dataPointIndex, w }) => {
+				if (seriesValue === undefined) {
+					return undefined as any;
+				}
+				const value = w.config.series[seriesIndex].value[dataPointIndex];
+				const outOf = w.config.series[seriesIndex].outOf[dataPointIndex];
+				return `${value}/${outOf}`;
+			},
+			title: { formatter: () => '' }
+		},
 	},
 	noData: { text: 'No Data' },
 	grid: {
@@ -65,7 +75,8 @@ const baseChartOptions: ApexOptions = {
 	yaxis: {
 		show: false,
 		forceNiceScale: true,
-		min: -1,
+		min: -25,
+		max: 125,
 		axisBorder: { show: false },
 		axisTicks: { show: false },
 		crosshairs: { show: false },
@@ -100,6 +111,8 @@ export type WeeklyOverviewData = { lastWeek: ChartData, thisWeek: ChartData };
 export interface ChartSeries {
 	name: string;
 	data: ChartData;
+	value?: ChartData;
+	outOf?: ChartData;
 }
 
 export type WeeklyOverviewSeries = { series: ChartSeries[] };

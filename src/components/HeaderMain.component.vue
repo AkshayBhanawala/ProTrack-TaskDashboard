@@ -7,8 +7,8 @@
 
 			<q-toolbar-title class="row justify-start items-center" style="column-gap: 10%; row-gap: 10px">
 				<div class="row inline justify-center items-center q-ml-lg" style="gap: 15px">
-					<q-avatar>
-						<img src="images/logo-mono-white.svg" alt="Avatar" />
+					<q-avatar class="logo-mono-white-no-circle">
+						<img src="images/logo-mono-white-no-circle.svg" alt="Avatar" />
 					</q-avatar>
 					<div>ProTrack</div>
 				</div>

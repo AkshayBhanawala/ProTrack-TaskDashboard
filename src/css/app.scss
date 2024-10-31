@@ -7,6 +7,23 @@ body {
 	font-size: 14px;
 	background-color: $background;
 	color: $text;
+
+	&:after {
+		@include grainy-background-psuedo-element;
+		opacity: 0.35;
+		z-index: 9000;
+		position: fixed;
+	}
+}
+
+.logo-mono-white-no-circle {
+	height: 50px;
+	width: 50px;
+
+	img {
+		background: url('images/logo-bg-gradient.jpg') no-repeat center center;
+		background-size: cover;
+	}
 }
 
 .header1 {
@@ -103,4 +120,71 @@ hr {
 
 .fit-content {
 	width: fit-content;
+}
+
+.q-body--force-scrollbar-x,
+.q-body--force-scrollbar-y {
+	overflow: hidden;
+}
+
+
+.q-drawer__backdrop,
+.global-spinner-wrapper {
+	backdrop-filter: blur(10px);
+
+	&:before {
+		display: block;
+		content: '';
+		height: 100%;
+		width: 100%;
+		top: 0;
+		left: 0;
+		position: absolute;
+		background: url('images/logo-bg-gradient.jpg') no-repeat center center;
+		background-size: cover;
+		opacity: 0.4;
+		pointer-events: inherit;
+	}
+
+	&:after {
+		@include grainy-background-psuedo-element;
+	}
+
+	.global-spinner {
+		&:before {
+			display: block;
+			content: "";
+			background: url(images/logo-mono-white-no-circle.svg) no-repeat center center;
+			background-size: cover;
+			opacity: 1;
+			height: 15vw;
+			width: 15vw;
+			z-index: 1;
+			position: relative;
+			animation-name: bilinking-rotate;
+			animation-duration: 2s;
+			animation-iteration-count: infinite;
+			animation-timing-function: linear;
+		}
+
+		.q-spinner {
+			display: none;
+		}
+	}
+}
+
+@keyframes bilinking-rotate {
+	0% {
+		transform: rotate(0deg);
+		opacity: 0.8;
+	}
+
+	50% {
+		opacity: 0.2;
+	}
+
+	100% {
+		transform: rotate(-360deg);
+		opacity: 0.8;
+	}
 }

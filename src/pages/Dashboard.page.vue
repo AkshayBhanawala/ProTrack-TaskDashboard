@@ -40,8 +40,9 @@
 	import NotesSection from '@/components/dashboard/NotesSection.component.vue';
 	import TaskForTheDaySection from '@/components/dashboard/TaskForTheDaySection.component.vue';
 	import WeeklyOverviewCard from '@/components/dashboard/WeeklyOverviewCard.component.vue';
+	import { usePromiseLoading } from '@/composables/useDataFetch.composable';
 	import { getBiWeeklyTasks } from '@/models/_MasterTasksList';
-	import { useBiWeeklyTasksStore } from '@/stores/store';
+	import { useBiWeeklyTasksStore, useGlobalSpinnerStore } from '@/stores/store';
 
 	interface Props {
 		photoOnly?: boolean;
@@ -61,7 +62,7 @@
 
 	withDefaults(defineProps<Props>(), {});
 
-	const mainSplitter = ref(50);
+	const mainSplitter = ref(60);
 	const leftSplitter = ref(480);
 	const rightSplitter = ref(380);
 
@@ -76,14 +77,21 @@
 		if (!biWeeklyTasks.value?.lastWeek || !biWeeklyTasks.value?.thisWeek) {
 			setNewData();
 		}
-		console.log('biWeeklyTasks:', biWeeklyTasks.value);
 		bus?.on('newData', () => {
 			setNewData();
 		});
 
 		function setNewData() {
-			getBiWeeklyTasks().then((biWeeklyTasks) => {
-				biWeeklyTaskStore.setBiWeeklyTasks(biWeeklyTasks);
+			const { loadingEvent, fetchData } = usePromiseLoading();
+			const spinner = useGlobalSpinnerStore();
+			loadingEvent?.on('change', (isLoading) => {
+				spinner.setLoading(isLoading);
+			});
+
+			fetchData(getBiWeeklyTasks).then((biWeeklyTasks) => {
+				if (biWeeklyTasks) {
+					biWeeklyTaskStore.setBiWeeklyTasks(biWeeklyTasks);
+				}
 			});
 		}
 	});

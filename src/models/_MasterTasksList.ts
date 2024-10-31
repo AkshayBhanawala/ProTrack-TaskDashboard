@@ -12,7 +12,7 @@ export function getBiWeeklyTasks(): Promise<BiWeeklyTasks> {
 				lastWeek: generateWeek(lastWeekStart),
 				thisWeek: generateWeek(thisWeekStart)
 			});
-		}, 0);
+		}, 2000);
 	});
 
 	function getRandomTasks(date: moment.Moment): Task[] {

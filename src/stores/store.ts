@@ -1,6 +1,6 @@
 import moment, { Moment } from 'moment';
 import { defineStore } from 'pinia';
-import { Screen } from 'quasar';
+import { Loading, Screen } from 'quasar';
 
 import { BiWeeklyTasks, Note, PartialTaskStatus, Task, TaskCount, TaskCountType } from '@/models';
 import { WeeklyOverviewData } from '@/models/WeeklyOverview.model';
@@ -11,6 +11,36 @@ function isScreenMini() {
 }
 
 type LeftSideBarState = { isOpen: boolean, isMini: boolean, mobileScreenBreakPointPx: number };
+
+export const useGlobalSpinnerStore = defineStore('GlobalSpinnerState', {
+	state: (): { isGlobalLoading: boolean } => ({
+		isGlobalLoading: false,
+	}),
+	getters: {
+		isLoading: (state) => state.isGlobalLoading,
+	},
+	actions: {
+		setLoading(isLoading: boolean): void {
+			this.isGlobalLoading = isLoading;
+		},
+		toggle(): void {
+			this.isGlobalLoading = !this.isGlobalLoading;
+		},
+		show(): void {
+			this.isGlobalLoading = true;
+		},
+		hide(): void {
+			this.isGlobalLoading = false;
+		}
+	}
+});
+useGlobalSpinnerStore().$subscribe((_mutation, state) => {
+	if (state.isGlobalLoading) {
+		Loading.show();
+	} else {
+		Loading.hide();
+	}
+});
 
 export const useLeftSideBarStore = defineStore('LeftSideBarState', {
 	state: (): LeftSideBarState => {
@@ -92,6 +122,34 @@ export const useNotesStore = defineStore('NotesState', {
 	}
 });
 
+export const useSelectedDayStore = defineStore('SelectedDate', {
+	state: (): { selectedDay: Moment } => ({
+		selectedDay: moment(),
+	}),
+	getters: {
+		getSelectedDay: (state) => state.selectedDay,
+	},
+	actions: {
+		setSelectedDay(date: Moment): void {
+			this.selectedDay = date;
+		},
+		previousDay(): void {
+			if (this.selectedDay.isSame(moment().startOf('week').add(1, 'day'), 'date')) {
+				this.selectedDay = moment().endOf('week');
+			} else {
+				this.selectedDay = this.selectedDay.clone().subtract(1, 'day');
+			}
+		},
+		nextDay(): void {
+			if (this.selectedDay.isSame(moment().endOf('week'), 'date')) {
+				this.selectedDay = moment().startOf('week').add(1, 'day');
+			} else {
+				this.selectedDay = this.selectedDay.clone().add(1, 'day');
+			}
+		}
+	}
+});
+
 export const useBiWeeklyTasksStore = defineStore('BiWeeklyTasks', {
 	state: (): { biWeeklyTasks: BiWeeklyTasks } => {
 		const biWeeklyTasks = LocalStorageUtil.get<BiWeeklyTasks>(LocalStorageKeys.BiWeeklyTasks);
@@ -112,7 +170,7 @@ export const useBiWeeklyTasksStore = defineStore('BiWeeklyTasks', {
 		},
 		getTaskForTheDayData(state): Task[] {
 			const thisWeek = state.biWeeklyTasks?.thisWeek;
-			const todayDate = moment().format('YYYY-MM-DD');
+			const todayDate = useSelectedDayStore().getSelectedDay.format('YYYY-MM-DD');
 			return thisWeek?.[todayDate] || [];
 		},
 		getTasksCountData(state): TaskCount {

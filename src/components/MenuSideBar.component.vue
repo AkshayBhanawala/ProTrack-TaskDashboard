@@ -1,13 +1,13 @@
 <template>
 	<div class="menu-side-bar-wrapper">
 		<section>
-			<div class="row inline justify-center items-center q-ml-lg lt-md logo-wrapper" style="gap: 15px">
-				<q-avatar>
-					<img src="images/logo-mono-white.svg" alt="Avatar" />
+			<div class="row inline justify-center items-center logo-wrapper" style="gap: 15px">
+				<q-avatar class="logo-mono-white-no-circle">
+					<img src="images/logo-mono-white-no-circle.svg" alt="Avatar" />
 				</q-avatar>
 				<div class="header1">ProTrack</div>
 			</div>
-			<hr class="invisible q-mb-xl lt-md" />
+			<hr class="invisible" />
 			<nav>
 				<q-tabs v-model="tab" vertical inline-label indicator-color="primary" active-color="white" content-class="menu-side-bar">
 					<q-route-tab name="Home" label="Home" to="/" exact icon="sym_r_grid_view" />
@@ -19,8 +19,7 @@
 			<hr class="q-mt-md q-mb-xl" />
 			<div class="upgrade-to-pro-wrapper">
 				<div class="decorative-logo">
-					<img src="images/logo-mono-white.svg" alt="Avatar" />
-					<ToolTip text="Refresh Data" />
+					<img src="images/logo-mono-white-no-circle.svg" alt="Avatar" />
 				</div>
 				<div class="header3">Upgrade to PRO</div>
 				<div>

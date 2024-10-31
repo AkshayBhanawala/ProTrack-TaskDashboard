@@ -2,18 +2,24 @@
 	<q-card class="calendar-section">
 		<q-card-section vertical class="row justify-between items-center q-pt-lg">
 			<span class="header2 title">Calendar</span>
-			<q-btn outline dense rounded icon="sym_r_arrow_forward_ios" class="color-secondary next-btn">
-				<ToolTip text="Next Day" />
-			</q-btn>
+			<div class="header-actions group">
+				<q-btn outline dense rounded icon="sym_r_arrow_back_ios_new" class="color-secondary previous-btn" @click="selectedDayStore.previousDay()">
+					<ToolTip text="Previous Day" />
+				</q-btn>
+				<q-btn outline dense rounded icon="sym_r_arrow_forward_ios" class="color-secondary next-btn" @click="selectedDayStore.nextDay()">
+					<ToolTip text="Next Day" />
+				</q-btn>
+			</div>
 		</q-card-section>
 		<q-card-section horizontal class="calendar-date-cards">
 			<q-btn
 				v-for="date in dates"
 				:key="date.format('YYYY-MM-DD')"
-				:class="{ today: isCurrentDate(date) }"
+				:class="{ active: selectedDayStore.getSelectedDay.isSame(date, 'date') }"
 				class="calendar-date-card"
 				outline
 				color="tertiary"
+				@click="selectedDayStore.setSelectedDay(date)"
 			>
 				<div class="date-day">
 					<span class="date">{{ date.format('DD') }}</span>
@@ -33,14 +39,14 @@
 </template>
 
 <script setup lang="ts">
-	import moment, { Moment } from 'moment';
 	import { computed } from 'vue';
 
 	import ToolTip from '@/components/ToolTip.component.vue';
-	import { useBiWeeklyTasksStore } from '@/stores/store';
+	import { useBiWeeklyTasksStore, useSelectedDayStore } from '@/stores/store';
 	import { TaskCount, TaskCountType, taskCountTypeColorMap, taskCountTypeLabelMap } from 'src/models';
 
 	const byWeeklyTasksStore = useBiWeeklyTasksStore();
+	const selectedDayStore = useSelectedDayStore();
 
 	const dates = computed(() => byWeeklyTasksStore.getThisWeekDates);
 	const tasksCount = computed((): Partial<TaskCount> => {
@@ -53,10 +59,6 @@
 		});
 		return counts;
 	});
-
-	function isCurrentDate(date: Moment): boolean {
-		return date.isSame(moment(), 'date');
-	}
 </script>
 
 <style scoped lang="scss">
@@ -75,10 +77,25 @@
 			font-weight: 500;
 		}
 
-		.next-btn {
-			width: 36px;
-			height: 36px;
-			border-radius: 10px;
+		.header-actions {
+			&,
+			> .group {
+				display: flex;
+				gap: 15px;
+				margin-left: auto;
+			}
+
+			&.group,
+			> .group {
+				gap: 7.5px;
+			}
+
+			.previous-btn,
+			.next-btn {
+				width: 36px;
+				height: 36px;
+				border-radius: 10px;
+			}
 		}
 
 		.calendar-date-cards {
@@ -134,8 +151,7 @@
 					}
 				}
 
-				&.today {
-					pointer-events: none;
+				&.active {
 					transform: scale(1.3);
 					&:before {
 						background-color: rgba($tertiary, 1);
@@ -148,6 +164,7 @@
 			gap: 16px;
 			padding: 40px 16px 20px 16px;
 			justify-content: space-between;
+			pointer-events: none;
 
 			.tasks-count-card {
 				flex-grow: 1;
