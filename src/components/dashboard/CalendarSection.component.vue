@@ -15,19 +15,22 @@
 			<q-btn
 				v-for="date in dates"
 				:key="date.format('YYYY-MM-DD')"
-				:class="{ active: selectedDayStore.getSelectedDay.isSame(date, 'date') }"
+				:class="{
+					active: selectedDayStore.getSelectedDay.isSame(date, 'date'),
+					today: isToday(date),
+				}"
 				class="calendar-date-card"
-				outline
-				color="tertiary"
 				@click="selectedDayStore.setSelectedDay(date)"
 			>
+				<!-- <ToolTip v-if="isToday(date)" text="Today" /> -->
+				<ToolTip :text="date.format('DD &nbsp; MMM &nbsp; YYYY')" />
 				<div class="date-day">
 					<span class="date">{{ date.format('DD') }}</span>
 					<span class="day">{{ date.format('ddd') }}</span>
 				</div>
 			</q-btn>
 		</q-card-section>
-		<q-card-section horizontal class="note-cards">
+		<q-card-section horizontal class="task-count-cards">
 			<q-card v-for="(v, k, index) in tasksCount" :key="index" :color="taskCountTypeColorMap[k]" class="tasks-count-card" outline>
 				<div class="task-count">
 					<span class="label">{{ taskCountTypeLabelMap[k] }}</span>
@@ -39,6 +42,7 @@
 </template>
 
 <script setup lang="ts">
+	import moment, { Moment } from 'moment';
 	import { computed } from 'vue';
 
 	import ToolTip from '@/components/ToolTip.component.vue';
@@ -59,6 +63,10 @@
 		});
 		return counts;
 	});
+
+	function isToday(date: Moment) {
+		return date.isSame(moment(), 'date');
+	}
 </script>
 
 <style scoped lang="scss">
@@ -157,10 +165,34 @@
 						background-color: rgba($tertiary, 1);
 					}
 				}
+
+				&.today {
+					background-color: $tertiary;
+					border: 1px solid $tertiary;
+
+					&:before {
+						background-color: white;
+					}
+
+					&:after {
+						content: 'Today';
+						position: absolute;
+						top: 3px;
+						left: 50%;
+						transform: translateX(-50%);
+						font-size: 10px;
+						line-height: 1;
+						font-weight: 700;
+					}
+
+					.date-day {
+						color: white;
+					}
+				}
 			}
 		}
 
-		.note-cards {
+		.task-count-cards {
 			gap: 16px;
 			padding: 40px 16px 20px 16px;
 			justify-content: space-between;

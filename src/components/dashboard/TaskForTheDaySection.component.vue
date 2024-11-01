@@ -16,7 +16,7 @@
 				</div>
 			</div>
 		</q-card-section>
-		<q-card-section vertical class="note-cards">
+		<q-card-section vertical class="task-count-cards">
 			<q-card v-for="(task, i) in tasks" :key="i" :index="i" class="note-card" outline>
 				<q-card-section horizontal class="note-section-top">
 					<div class="note">
@@ -144,7 +144,7 @@
 			}
 		}
 
-		.note-cards {
+		.task-count-cards {
 			display: flex;
 			flex-direction: column;
 			gap: 16px;

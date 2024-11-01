@@ -48,8 +48,8 @@ const baseChartOptions: ApexOptions = {
 				if (seriesValue === undefined) {
 					return undefined as any;
 				}
-				const value = w.config.series[seriesIndex].value[dataPointIndex];
-				const outOf = w.config.series[seriesIndex].outOf[dataPointIndex];
+				const value = w.config.series[seriesIndex]?.value?.[dataPointIndex];
+				const outOf = w.config.series[seriesIndex]?.outOf?.[dataPointIndex];
 				return `${value}/${outOf}`;
 			},
 			title: { formatter: () => '' }
