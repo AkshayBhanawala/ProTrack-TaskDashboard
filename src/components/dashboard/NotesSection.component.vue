@@ -164,7 +164,7 @@
 			}
 		}
 
-		.task-count-cards {
+		.note-cards {
 			display: flex;
 			gap: 16px;
 			padding-top: 10px;
