@@ -117,9 +117,9 @@
 
 	import ToolTip from '../ToolTip.component.vue';
 
-	import ConfirmDialog from '@/components/dialogs/ConfirmDialog.component.vue';
-	import { ITaskInput, Subtask, TagNameType, Task, TaskDialogProps } from '@/models';
-	import { useBiWeeklyTasksStore, useTaskTagsStore } from '@/stores/store';
+	import ConfirmDialog from 'src/components/dialogs/ConfirmDialog.component.vue';
+	import { ITaskInput, Subtask, TagNameType, Task, TaskDialogProps } from 'src/models';
+	import { useBiWeeklyTasksStore, useTaskTagsStore } from 'src/stores/store';
 
 	const props = withDefaults(defineProps<TaskDialogProps>(), { taskOperation: 'ADD' });
 

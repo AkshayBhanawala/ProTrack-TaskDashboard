@@ -1,6 +1,6 @@
 // app global css in SCSS form
-@import '@/css/web-fonts/PlusJakartaSans.css';
-@import '@/css/container.scss';
+@import 'src/css/web-fonts/PlusJakartaSans.css';
+@import 'src/css/container.scss';
 
 body {
 	font-family: 'Plus Jakarta Sans', sans-serif;

@@ -36,16 +36,16 @@
 	import { EventBus, Screen } from 'quasar';
 	import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue';
 
-	import CalendarSection from '@/components/dashboard/CalendarSection.component.vue';
-	import NotesSection from '@/components/dashboard/NotesSection.component.vue';
-	import TaskForTheDaySection from '@/components/dashboard/TaskForTheDaySection.component.vue';
-	import WeeklyOverviewCard from '@/components/dashboard/WeeklyOverviewCard.component.vue';
-	import { usePromiseLoading } from '@/composables/useDataFetch.composable';
-	import { getBiWeeklyTasks } from '@/models/_MasterTasksList';
-	import { resetPiniaStores } from '@/stores';
-	import { useBiWeeklyTasksStore, useGlobalSpinnerStore } from '@/stores/store';
-	import { LocalStorageUtil } from '@/utils/localStorage.util';
-	import { notifyItem_Welcome } from '@/utils/notification-item.util';
+	import CalendarSection from 'src/components/dashboard/CalendarSection.component.vue';
+	import NotesSection from 'src/components/dashboard/NotesSection.component.vue';
+	import TaskForTheDaySection from 'src/components/dashboard/TaskForTheDaySection.component.vue';
+	import WeeklyOverviewCard from 'src/components/dashboard/WeeklyOverviewCard.component.vue';
+	import { usePromiseLoading } from 'src/composables/useDataFetch.composable';
+	import { getBiWeeklyTasks } from 'src/models/_MasterTasksList';
+	import { resetPiniaStores } from 'src/stores';
+	import { useBiWeeklyTasksStore, useGlobalSpinnerStore } from 'src/stores/store';
+	import { LocalStorageUtil } from 'src/utils/localStorage.util';
+	import { notifyItem_Welcome } from 'src/utils/notification-item.util';
 
 	interface Props {
 		photoOnly?: boolean;

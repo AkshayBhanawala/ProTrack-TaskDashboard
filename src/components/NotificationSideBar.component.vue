@@ -7,8 +7,8 @@
 <script setup lang="ts">
 	import { computed } from 'vue';
 
-	import NotificationItem from '@/components/NotificationItem.component.vue';
-	import { useNotificationItemsStore } from '@/stores/store';
+	import NotificationItem from 'src/components/NotificationItem.component.vue';
+	import { useNotificationItemsStore } from 'src/stores/store';
 
 	defineOptions({
 		name: 'NotificationSideBar',

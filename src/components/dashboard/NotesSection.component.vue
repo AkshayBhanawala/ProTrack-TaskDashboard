@@ -65,9 +65,9 @@
 	import { register, SwiperContainer } from 'swiper/element/bundle';
 	import { computed, onMounted, ref } from 'vue';
 
-	import ToolTip from '@/components/ToolTip.component.vue';
-	import { useNotesStore } from '@/stores/store';
-	import { notifyToast_NotImplemented } from '@/utils/notification-toast.util';
+	import ToolTip from 'src/components/ToolTip.component.vue';
+	import { useNotesStore } from 'src/stores/store';
+	import { notifyToast_NotImplemented } from 'src/utils/notification-toast.util';
 	import { notesService } from 'src/services';
 	register();
 

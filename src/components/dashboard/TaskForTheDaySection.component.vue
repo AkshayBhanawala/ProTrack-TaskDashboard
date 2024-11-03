@@ -75,15 +75,15 @@
 	import ConfirmDialog from '../dialogs/ConfirmDialog.component.vue';
 	import TaskDialog from '../dialogs/TaskDialog.component.vue';
 
-	import ToolTip from '@/components/ToolTip.component.vue';
-	import { PartialTaskStatus, TagColorMapType, TagNameType, Task, TaskDialogProps } from '@/models';
-	import { useBiWeeklyTasksStore, useSelectedDayStore, useTaskTagsStore } from '@/stores/store';
+	import ToolTip from 'src/components/ToolTip.component.vue';
+	import { PartialTaskStatus, TagColorMapType, TagNameType, Task, TaskDialogProps } from 'src/models';
+	import { useBiWeeklyTasksStore, useSelectedDayStore, useTaskTagsStore } from 'src/stores/store';
 	import {
 		notifyToast_TaskAdded,
 		notifyToast_TaskDeleted,
 		notifyToast_TaskUpdated,
 		notifyToast_NotImplemented,
-	} from '@/utils/notification-toast.util';
+	} from 'src/utils/notification-toast.util';
 
 	interface Props {
 		photoOnly?: boolean;

@@ -1,4 +1,4 @@
-import { Task } from '@/models';
+import { Task } from 'src/models';
 
 export type TaskDialogProps = {
 	taskOperation: 'ADD' | 'EDIT';

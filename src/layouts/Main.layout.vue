@@ -46,10 +46,10 @@
 <script setup lang="ts">
 	import { Screen } from 'quasar';
 
-	import FooterMain from '@/components/FooterMain.component.vue';
-	import HeaderMain from '@/components/HeaderMain.component.vue';
-	import MenuSideBar from '@/components/MenuSideBar.component.vue';
-	import NotificationSideBar from '@/components/NotificationSideBar.component.vue';
+	import FooterMain from 'src/components/FooterMain.component.vue';
+	import HeaderMain from 'src/components/HeaderMain.component.vue';
+	import MenuSideBar from 'src/components/MenuSideBar.component.vue';
+	import NotificationSideBar from 'src/components/NotificationSideBar.component.vue';
 	import { useLeftSideBarStore, useRightSideBarStore } from 'src/stores/store';
 
 	defineOptions({
