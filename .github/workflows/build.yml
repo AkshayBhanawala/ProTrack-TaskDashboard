@@ -1,8 +1,15 @@
 name: Build & Deploy
 on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: string
+        default: GITHUB
+        required: false
   push:
     branches:
       - master
+
 jobs:
   build:
     runs-on: ubuntu-24.04
