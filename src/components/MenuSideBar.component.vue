@@ -37,9 +37,8 @@
 <script setup lang="ts">
 	import { ref } from 'vue';
 
-	import ToolTip from './ToolTip.component.vue';
-
 	import AccountInfoCard from '@/components/AccountInfoCard.component.vue';
+	import ToolTip from '@/components/ToolTip.component.vue';
 	import { notifyToast_NotImplemented } from '@/utils/notification-toast.util';
 
 	defineOptions({

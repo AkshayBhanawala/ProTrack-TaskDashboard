@@ -59,9 +59,8 @@
 	import { Dialog } from 'quasar';
 	import { computed, ref } from 'vue';
 
-	import TaskDialog from './dialogs/TaskDialog.component.vue';
-
 	import AccountInfoCard from '@/components/AccountInfoCard.component.vue';
+	import TaskDialog from '@/components/dialogs/TaskDialog.component.vue';
 	import ToolTip from '@/components/ToolTip.component.vue';
 	import { Task } from '@/models';
 	import { useBiWeeklyTasksStore, useLeftSideBarStore, useNotificationItemsStore, useRightSideBarStore } from '@/stores/store';
