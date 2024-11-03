@@ -13,6 +13,8 @@ const path = require('path');
 
 const { configure } = require('quasar/wrappers');
 
+console.log(process.env);
+
 module.exports = configure(function (/* ctx */) {
 	return {
 		// https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
@@ -51,6 +53,7 @@ module.exports = configure(function (/* ctx */) {
 
 		// Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
 		build: {
+			publicPath: process.env.PUBLIC_BASE_PATH,
 			target: {
 				browser: ['es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1'],
 				node: 'node20'

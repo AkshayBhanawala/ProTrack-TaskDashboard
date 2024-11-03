@@ -29,6 +29,12 @@ jobs:
         with:
           node-version: 22
 
+      - name: Set Public Base Path for quasar.config.js
+        shell: bash
+        run: |
+          PUBLIC_BASE_PATH="/${{ github.event.repository.name }}"
+          echo "PUBLIC_BASE_PATH=${PUBLIC_BASE_PATH}"
+
       - name: Install
         shell: bash
         env:
