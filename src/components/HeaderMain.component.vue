@@ -1,16 +1,16 @@
 <template>
 	<q-header reveal class="q-py-md" height-hint="98">
-		<q-toolbar>
-			<q-btn dense flat round size="xl" icon="sym_r_menu" class="lt-md" @click="leftSideBarState.toggleSideBar()">
+		<q-toolbar class="header-toolbar">
+			<q-btn dense flat round size="xl" icon="sym_r_menu" class="lt-lg hamburger-btn" @click="leftSideBarState.toggleSideBar()">
 				<ToolTip text="Menu" />
 			</q-btn>
 
-			<q-toolbar-title class="row justify-start items-center" style="column-gap: 10%; row-gap: 10px">
-				<div class="row inline justify-center items-center q-ml-lg" style="gap: 15px">
-					<q-avatar class="logo-mono-white-no-circle">
+			<q-toolbar-title class="header-tool-bar-title">
+				<div class="row inline justify-center items-center no-wrap logo-wrapper" style="gap: 15px">
+					<q-avatar class="logo-mono-white-no-circle logo-icon">
 						<img src="images/logo-mono-white-no-circle.svg" alt="Avatar" />
 					</q-avatar>
-					<div>ProTrack</div>
+					<div class="logo-text">ProTrack</div>
 				</div>
 				<div class="row inline justify-center items-center search-wrapper" style="gap: 15px">
 					<q-input
@@ -21,7 +21,7 @@
 						v-model="searchText"
 						placeholder="Search"
 						:class="{ 'has-value': searchText?.length }"
-						@focus="notifyNotImplemented()"
+						@focus="notifyToast_NotImplemented()"
 					>
 						<template v-slot:prepend>
 							<q-icon name="sym_r_search" class="q-mr-sm" />
@@ -65,7 +65,7 @@
 	import ToolTip from '@/components/ToolTip.component.vue';
 	import { Task } from '@/models';
 	import { useBiWeeklyTasksStore, useLeftSideBarStore, useRightSideBarStore } from '@/stores/store';
-	import { notifyNotImplemented, notifyTaskAdded } from '@/utils/notifications.util';
+	import { notifyToast_NotImplemented, notifyToast_TaskAdded } from '@/utils/notification-toast.util';
 
 	defineOptions({
 		name: 'HeaderMain',
@@ -89,7 +89,7 @@
 		})
 			.onOk((newTask: Task) => {
 				biWeeklyTaskStore.addNewTask(newTask);
-				notifyTaskAdded();
+				notifyToast_TaskAdded();
 			})
 			.onCancel(() => {})
 			.onDismiss(() => {});
@@ -103,6 +103,49 @@
 
 		* {
 			transition: 0.2s ease;
+		}
+
+		.header-toolbar {
+			.header-tool-bar-title {
+				display: flex;
+				justify-content: flex-start;
+				align-items: center;
+				text-overflow: clip;
+				gap: 10%;
+
+				.logo-wrapper {
+					margin-left: 24px;
+				}
+			}
+			@media (max-width: 890px) {
+				.header-tool-bar-title {
+					gap: 10px;
+
+					.logo-wrapper {
+						margin-left: 0;
+					}
+				}
+			}
+			@media (max-width: 530px) {
+				.hamburger-btn {
+					min-width: min-content;
+					:deep() {
+						.q-btn__content {
+							width: min-content;
+						}
+					}
+				}
+				.header-tool-bar-title {
+					display: flex;
+					justify-content: flex-start;
+					align-items: center;
+					padding: 0 5px;
+
+					.logo-text {
+						display: none;
+					}
+				}
+			}
 		}
 
 		.search-wrapper {
@@ -146,6 +189,26 @@
 				.q-field__input {
 					color: $text;
 				}
+				@media (max-width: 890px) {
+					.q-field {
+						flex-shrink: 1;
+						width: 80%;
+					}
+				}
+				@media (max-width: 530px) {
+					.q-field {
+						width: 100%;
+					}
+					.q-field__prepend {
+						padding-right: 0;
+						.q-icon {
+							margin-right: 0;
+						}
+					}
+					.q-field__append {
+						display: none;
+					}
+				}
 			}
 		}
 
@@ -161,6 +224,30 @@
 				.badge {
 					background-color: $negative;
 					transform: translate(-6px, 8px);
+				}
+			}
+
+			@media (max-width: 890px) {
+				.add-task-btn {
+					padding: 10px;
+					:deep() {
+						.q-btn__content {
+							.q-icon {
+								margin: 0;
+							}
+							span.block {
+								display: none !important;
+							}
+						}
+					}
+				}
+			}
+
+			@media (max-width: 420px) {
+				gap: 5px;
+
+				.add-task-btn {
+					display: none;
 				}
 			}
 		}

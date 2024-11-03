@@ -1,48 +1,41 @@
-// breakpoint variable, from https://quasar.dev/style/breakpoints
-// Except the xs one because I think 600px is too small
-$xs-breakpoint: 718px;
-$sm-breakpoint: 1024px;
-$md-breakpoint: 1439px;
-$lg-breakpoint: 1920px;
-
 .container,
 .container-sm,
 .container-md,
 .container-lg,
 .container-xl {
 	width: 100%;
-	// margin-right: auto;
-	// margin-left: auto;
+	margin-right: auto;
+	margin-left: auto;
 }
 
-@media (min-width: $xs-breakpoint) {
+@media (min-width: $breakpoint-xs) {
 
 	.container,
 	.container-sm {
-		// max-width: 540px;
+		max-width: 90%;
 	}
 }
 
-@media (min-width: $sm-breakpoint) {
+@media (min-width: $breakpoint-sm) {
 
 	.container,
 	.container-sm,
 	.container-md {
-		// max-width: 920px;
+		max-width: 100%;
 	}
 }
 
-@media (min-width: $md-breakpoint) {
+@media (min-width: $breakpoint-md) {
 
 	.container,
 	.container-sm,
 	.container-md,
 	.container-lg {
-		// max-width: 1140px;
+		max-width: 100%;
 	}
 }
 
-@media (min-width: $lg-breakpoint) {
+@media (min-width: $breakpoint-lg) {
 
 	.container,
 	.container-sm,
@@ -50,7 +43,11 @@ $lg-breakpoint: 1920px;
 	.container-lg,
 	.container-xl {
 		max-width: 1700px;
-		margin-right: auto;
-		margin-left: auto;
+	}
+}
+
+@media (max-width: $breakpoint-xs) {
+	.q-card__section {
+		flex-wrap: wrap;
 	}
 }

@@ -15,38 +15,40 @@
 		</q-card-section>
 
 		<q-card-section horizontal class="full-height">
-			<q-card-section class="stats">
-				<span class="completed">
-					<span class="count">{{ thisWeekCompletedCount }}</span>
-					<span class="change small text-bold">
+			<q-card-section class="stats-wrapper">
+				<div class="stats">
+					<span class="completed">
+						<span class="count">{{ thisWeekCompletedCount }}</span>
+						<span class="change small text-bold">
+							<span v-if="changePercent >= 0" class="positive">
+								<q-icon class="arrow" name="sym_r_arrow_drop_up" />
+								<span>+{{ changePercent }}%</span>
+							</span>
+							<span v-else class="negative">
+								<q-icon class="arrow" name="sym_r_arrow_drop_down" />
+								<span>{{ changePercent }}%</span>
+							</span>
+						</span>
+					</span>
+
+					<div class="text-subtext">
+						<span>Tasks Completed</span>
+					</div>
+
+					<div class="change-status text-bold q-mt-sm">
 						<span v-if="changePercent >= 0" class="positive">
-							<q-icon class="arrow" name="sym_r_arrow_drop_up" />
-							<span>+{{ changePercent }}%</span>
+							<q-icon class="icon" name="sym_r_check_circle" />
+							<span>On track</span>
 						</span>
 						<span v-else class="negative">
-							<q-icon class="arrow" name="sym_r_arrow_drop_down" />
-							<span>{{ changePercent }}%</span>
+							<q-icon class="icon" name="sym_r_run_circle" />
+							<span>Falling Behind</span>
 						</span>
-					</span>
-				</span>
-
-				<div class="text-subtext">
-					<span>Tasks Completed</span>
-				</div>
-
-				<div class="change-status text-bold q-mt-sm">
-					<span v-if="changePercent >= 0" class="positive">
-						<q-icon class="icon" name="sym_r_check_circle" />
-						<span>On track</span>
-					</span>
-					<span v-else class="negative">
-						<q-icon class="icon" name="sym_r_run_circle" />
-						<span>Falling Behind</span>
-					</span>
+					</div>
 				</div>
 
 				<div class="q-mt-md actions">
-					<q-btn outline class="btn" icon="sym_r_menu_book" label="Open Tasks" @click="notifyNotImplemented()" />
+					<q-btn outline class="btn" icon="sym_r_menu_book" label="Open Tasks" @click="notifyToast_NotImplemented()" />
 				</div>
 			</q-card-section>
 
@@ -79,7 +81,7 @@
 	import { DailyTotal, TaskCountType } from '@/models';
 	import { ApexChartEvents, ChartOptions, WeeklyOverviewData, ChartData, ChartSeries, ChartType } from '@/models/WeeklyOverview.model';
 	import { useBiWeeklyTasksStore } from '@/stores/store';
-	import { notifyNotImplemented } from '@/utils/notifications.util';
+	import { notifyToast_NotImplemented } from '@/utils/notification-toast.util';
 	interface Props {
 		photoOnly?: boolean;
 		noBorder?: boolean;
@@ -283,9 +285,16 @@
 			border-radius: 10px;
 		}
 
-		.stats {
+		.stats-wrapper {
 			justify-content: flex-start;
 			align-items: flex-start;
+
+			@media (max-width: $breakpoint-xs) {
+				flex-grow: 1;
+				flex-direction: row !important;
+				justify-content: space-between;
+				align-items: center;
+			}
 
 			&,
 			.completed {

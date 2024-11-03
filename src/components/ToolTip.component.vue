@@ -1,5 +1,5 @@
 <template>
-	<q-tooltip class="tooltip-wrapper" :offset="[5, 5]">
+	<q-tooltip class="tooltip-wrapper" :offset="[5, 5]" :anchor="props.anchor" :self="props.self">
 		<template v-if="slots?.default">
 			{{ slots.default }}
 		</template>
@@ -17,7 +17,7 @@
 	defineOptions({
 		name: 'ToolTip',
 	});
-	withDefaults(defineProps<Props>(), {});
+	const props = withDefaults(defineProps<Props>(), {});
 
 	const slots = useSlots();
 </script>

@@ -12,6 +12,20 @@
 // to match your app's branding.
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
 
+// breakpoint variable, from https://quasar.dev/style/breakpoints
+// Except the xs one because I think 600px is too small
+$breakpoint-xs: 700px;
+$breakpoint-sm: 1050px;
+$breakpoint-md: 1400px;
+$breakpoint-lg: 1920px;
+// $breakpoint-xs-max: (
+// 	map.get($sizes, "sm") - 0.02) !default $breakpoint-sm-min: map.get($sizes, "sm") !default $breakpoint-sm-max: (
+// 			map.get($sizes, "md") - 0.02) !default $breakpoint-md-min: map.get($sizes, "md") !default $breakpoint-md-max: (
+// 					map.get($sizes, "lg") - 0.02) !default $breakpoint-lg-min: map.get($sizes, "lg") !default $breakpoint-lg-max: (
+// 							map.get($sizes, "xl") - 0.02) !default $breakpoint-xl-min: map.get($sizes, "xl") !default
+
+
+
 $primary									: #49CCF9;
 $secondary								: #7B68EE;
 $tertiary									: #FD71AF;

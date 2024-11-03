@@ -1,8 +1,8 @@
 <template>
 	<main class="container">
-		<q-splitter v-model="mainSplitter" class="left-splitter" separator-style="opacity: 0">
+		<q-splitter :horizontal="Screen.lt.md" v-model="mainSplitter" class="main-splitter" separator-style="opacity: 0">
 			<template v-slot:before>
-				<q-splitter horizontal v-model="leftSplitter" class="left-splitter" :limits="[65, 480]" unit="px">
+				<q-splitter horizontal v-model="leftSplitter" class="left-splitter" unit="px">
 					<template v-slot:before>
 						<div class="greetings">
 							<p class="header3">Welcome Back!</p>
@@ -12,20 +12,20 @@
 					</template>
 
 					<template v-slot:after>
-						<NotesSection />
+						<q-splitter v-if="Screen.lt.md" horizontal v-model="rightSplitter" class="right-splitter" unit="px">
+							<template v-slot:before><CalendarSection /></template>
+							<template v-slot:after><TaskForTheDaySection /></template>
+						</q-splitter>
+						<NotesSection v-else />
 					</template>
 				</q-splitter>
 			</template>
 
 			<template v-slot:after>
-				<q-splitter horizontal v-model="rightSplitter" class="right-splitter" :limits="[0, 380]" unit="px">
-					<template v-slot:before>
-						<CalendarSection />
-					</template>
-
-					<template v-slot:after>
-						<TaskForTheDaySection />
-					</template>
+				<NotesSection v-if="Screen.lt.md" />
+				<q-splitter v-else horizontal v-model="rightSplitter" class="right-splitter" unit="px">
+					<template v-slot:before><CalendarSection /></template>
+					<template v-slot:after><TaskForTheDaySection /></template>
 				</q-splitter>
 			</template>
 		</q-splitter>
@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-	import { EventBus } from 'quasar';
+	import { EventBus, Screen } from 'quasar';
 	import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue';
 
 	import CalendarSection from '@/components/dashboard/CalendarSection.component.vue';
@@ -63,8 +63,8 @@
 	withDefaults(defineProps<Props>(), {});
 
 	const mainSplitter = ref(60);
-	const leftSplitter = ref(480);
-	const rightSplitter = ref(380);
+	const leftSplitter = ref(Infinity);
+	const rightSplitter = ref(Infinity);
 
 	const biWeeklyTaskStore = useBiWeeklyTasksStore();
 	const biWeeklyTasks = computed(() => {
@@ -109,11 +109,13 @@
 		row-gap: 15px;
 		column-gap: 25px;
 
+		.main-splitter,
 		.left-splitter,
 		.right-splitter {
 			gap: 1vw;
 		}
 
+		.main-splitter,
 		.left-splitter {
 			:deep() {
 				.q-splitter__before {

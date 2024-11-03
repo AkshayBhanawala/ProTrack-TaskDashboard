@@ -58,7 +58,7 @@
 						<q-btn flat dense rounded icon="sym_r_delete" color="negative" @click="openDeleteTaskDialog(task)">
 							<ToolTip text="Delete" />
 						</q-btn>
-						<q-btn flat dense rounded icon="sym_r_steppers" color="secondary" @click="notifyNotImplemented()">
+						<q-btn flat dense rounded icon="sym_r_steppers" color="secondary" @click="notifyToast_NotImplemented()">
 							<ToolTip text="More options" />
 						</q-btn>
 					</q-card-actions>
@@ -78,7 +78,12 @@
 	import ToolTip from '@/components/ToolTip.component.vue';
 	import { PartialTaskStatus, TagColorMapType, TagNameType, Task, TaskDialogProps } from '@/models';
 	import { useBiWeeklyTasksStore, useSelectedDayStore, useTaskTagsStore } from '@/stores/store';
-	import { notifyTaskAdded, notifyTaskDeleted, notifyTaskUpdated, notifyNotImplemented } from '@/utils/notifications.util';
+	import {
+		notifyToast_TaskAdded,
+		notifyToast_TaskDeleted,
+		notifyToast_TaskUpdated,
+		notifyToast_NotImplemented,
+	} from '@/utils/notification-toast.util';
 
 	interface Props {
 		photoOnly?: boolean;
@@ -112,7 +117,7 @@
 		})
 			.onOk((newTask: Task) => {
 				biWeeklyTaskStore.addNewTask(newTask);
-				notifyTaskAdded();
+				notifyToast_TaskAdded();
 			})
 			.onCancel(() => {})
 			.onDismiss(() => {});
@@ -128,7 +133,7 @@
 		})
 			.onOk((updatedTask: Task) => {
 				biWeeklyTaskStore.updateThisWeekTask(updatedTask);
-				notifyTaskUpdated();
+				notifyToast_TaskUpdated();
 			})
 			.onCancel(() => {})
 			.onDismiss(() => {});
@@ -147,7 +152,7 @@
 		})
 			.onOk(() => {
 				biWeeklyTaskStore.deleteThisWeekTask(task);
-				notifyTaskDeleted();
+				notifyToast_TaskDeleted();
 			})
 			.onCancel(() => {})
 			.onDismiss(() => {});

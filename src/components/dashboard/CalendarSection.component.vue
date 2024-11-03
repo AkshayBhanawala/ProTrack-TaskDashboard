@@ -23,7 +23,7 @@
 				@click="selectedDayStore.setSelectedDay(date)"
 			>
 				<!-- <ToolTip v-if="isToday(date)" text="Today" /> -->
-				<ToolTip :text="date.format('DD &nbsp; MMM &nbsp; YYYY')" />
+				<ToolTip :text="date.format('DD &nbsp; MMM &nbsp; YYYY')" anchor="top middle" self="bottom middle" />
 				<div class="date-day">
 					<span class="date">{{ date.format('DD') }}</span>
 					<span class="day">{{ date.format('ddd') }}</span>
@@ -113,17 +113,18 @@
 			justify-content: space-between;
 
 			.calendar-date-card {
+				flex-basis: 100%;
 				flex-grow: 1;
 				min-width: 36px;
 				width: 50px;
-				max-width: 60px;
+				max-width: 100px;
 				padding: 0;
 				padding-top: 15px;
 				border: 1px solid $separator-color;
 				border-radius: 10px;
 				overflow: hidden;
-				box-shadow: rgba(0, 0, 0, 0.04) 0px 30px 30px -5px, rgba(230, 228, 240, 0.5) 0px 20px 20px -5px;
-				transition: transform 0.3s ease-in-out;
+				box-shadow: rgba(0, 0, 0, 0.04) 0px 30px 30px -5px, rgba($separator-color, 0.5) 0px 20px 20px -5px;
+				transition: 0.3s ease-in-out;
 
 				&:before {
 					content: '';
@@ -161,6 +162,8 @@
 
 				&.active {
 					transform: scale(1.3);
+					box-shadow: rgba(0, 0, 0, 0.08) 0px 30px 30px -5px, rgba($separator-color, 1) 0px 20px 20px -5px;
+
 					&:before {
 						background-color: rgba($tertiary, 1);
 					}
@@ -169,6 +172,11 @@
 				&.today {
 					background-color: $tertiary;
 					border: 1px solid $tertiary;
+					box-shadow: rgba(0, 0, 0, 0.04) 0px 30px 30px -5px, rgba($tertiary, 0.25) 0px 20px 20px -5px;
+
+					&.active {
+						box-shadow: rgba(0, 0, 0, 0.04) 0px 30px 30px -5px, rgba($tertiary, 0.35) 0px 20px 20px -5px;
+					}
 
 					&:before {
 						background-color: white;
@@ -194,7 +202,7 @@
 
 		.task-count-cards {
 			gap: 16px;
-			padding: 40px 16px 20px 16px;
+			padding: 2vh 16px 20px 16px;
 			justify-content: space-between;
 			pointer-events: none;
 

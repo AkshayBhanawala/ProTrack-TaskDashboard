@@ -12,7 +12,7 @@ Notify.setDefaults({
 	classes: 'notification-popup',
 });
 
-export function notifyTaskAdded(): void {
+export function notifyToast_TaskAdded(): void {
 	Notify.create({
 		type: 'positive',
 		message: 'Task added successfully!',
@@ -20,7 +20,7 @@ export function notifyTaskAdded(): void {
 	});
 }
 
-export function notifyTaskUpdated(): void {
+export function notifyToast_TaskUpdated(): void {
 	Notify.create({
 		type: 'info',
 		message: 'Task updated successfully!',
@@ -28,7 +28,7 @@ export function notifyTaskUpdated(): void {
 	});
 }
 
-export function notifyTaskDeleted(): void {
+export function notifyToast_TaskDeleted(): void {
 	Notify.create({
 		type: 'negative',
 		message: 'Task deleted successfully!',
@@ -36,7 +36,7 @@ export function notifyTaskDeleted(): void {
 	});
 }
 
-export function notifyNotImplemented(): void {
+export function notifyToast_NotImplemented(): void {
 	Notify.create({
 		type: 'warning',
 		message: 'Sorry, not implemented yet!',

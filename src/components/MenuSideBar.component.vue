@@ -11,9 +11,9 @@
 			<nav>
 				<q-tabs v-model="tab" vertical inline-label indicator-color="primary" active-color="white" content-class="menu-side-bar">
 					<q-route-tab name="Home" label="Home" to="/" exact icon="sym_r_grid_view" />
-					<q-route-tab name="Calendar" label="Calendar" to="/" exact icon="sym_r_calendar_month" @click="notifyNotImplemented()" />
-					<q-route-tab name="Tasks" label="Tasks" to="/" exact icon="sym_r_checklist" @click="notifyNotImplemented()" />
-					<q-route-tab name="Notes" label="Notes" to="/" exact icon="sym_r_note_stack" @click="notifyNotImplemented()" />
+					<q-route-tab name="Calendar" label="Calendar" to="/" exact icon="sym_r_calendar_month" @click="notifyToast_NotImplemented()" />
+					<q-route-tab name="Tasks" label="Tasks" to="/" exact icon="sym_r_checklist" @click="notifyToast_NotImplemented()" />
+					<q-route-tab name="Notes" label="Notes" to="/" exact icon="sym_r_note_stack" @click="notifyToast_NotImplemented()" />
 				</q-tabs>
 			</nav>
 			<hr class="q-mt-md q-mb-xl" />
@@ -40,7 +40,7 @@
 	import ToolTip from './ToolTip.component.vue';
 
 	import AccountInfoCard from '@/components/AccountInfoCard.component.vue';
-	import { notifyNotImplemented } from '@/utils/notifications.util';
+	import { notifyToast_NotImplemented } from '@/utils/notification-toast.util';
 
 	defineOptions({
 		name: 'MenuSideBar',

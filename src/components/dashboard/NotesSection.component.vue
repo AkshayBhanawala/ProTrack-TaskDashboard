@@ -3,7 +3,7 @@
 		<q-card-section vertical class="row justify-between items-center q-py-sm q-px-none">
 			<span class="header2 title">Notes</span>
 			<div class="header-actions">
-				<q-btn unelevated dense rounded icon="sym_r_add" class="color-primary add-btn" @click="notifyNotImplemented()">
+				<q-btn unelevated dense rounded icon="sym_r_add" class="color-primary add-btn" @click="notifyToast_NotImplemented()">
 					<ToolTip text="Add Note" />
 				</q-btn>
 				<q-btn outline dense rounded icon="sym_r_arrow_forward_ios" class="color-secondary next-btn" @click="nextNote()">
@@ -50,7 +50,7 @@
 				<q-card-section horizontal class="note-section-bottom">
 					<div class="subtext note-date">{{ note?.date?.format('DD MMM, YYYY') }}</div>
 					<q-card-actions horizontal class="note-actions">
-						<q-btn outline dense rounded icon="sym_r_expand_content" class="color-secondary" @click="notifyNotImplemented()">
+						<q-btn outline dense rounded icon="sym_r_expand_content" class="color-secondary" @click="notifyToast_NotImplemented()">
 							<ToolTip text="Expand" />
 						</q-btn>
 					</q-card-actions>
@@ -67,7 +67,7 @@
 
 	import ToolTip from '@/components/ToolTip.component.vue';
 	import { useNotesStore } from '@/stores/store';
-	import { notifyNotImplemented } from '@/utils/notifications.util';
+	import { notifyToast_NotImplemented } from '@/utils/notification-toast.util';
 	import { notesService } from 'src/services';
 	register();
 

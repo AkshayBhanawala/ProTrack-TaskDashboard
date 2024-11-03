@@ -43,6 +43,8 @@
 </template>
 
 <script setup lang="ts">
+	import { Screen } from 'quasar';
+
 	import FooterMain from '@/components/FooterMain.component.vue';
 	import HeaderMain from '@/components/HeaderMain.component.vue';
 	import MenuSideBar from '@/components/MenuSideBar.component.vue';
@@ -59,6 +61,8 @@
 
 	const leftSideBarState = useLeftSideBarStore();
 	const rightSideBarState = useRightSideBarStore();
+
+	Screen.setSizes({ xl: 1920, lg: 1400, md: 1050, sm: 700 });
 </script>
 
 <style scoped lang="scss">
@@ -77,6 +81,9 @@
 		}
 	}
 	:deep() {
+		.q-drawer--right {
+			max-width: 350px;
+		}
 		.q-drawer__opener.fixed-right + .q-drawer__backdrop:not(.hidden) + .q-drawer--right {
 			overflow: hidden;
 			box-sizing: content-box;
@@ -85,7 +92,13 @@
 			border-radius: 30px;
 			border: 4px solid rgba($separator-color, 1);
 			outline: 4px solid rgba($separator-color, 0.4);
-			margin-right: 20px;
+			width: 80vw !important;
+			margin-right: 30px;
+
+			@media (max-width: 420px) {
+				width: 85vw !important;
+				margin-right: 5px;
+			}
 		}
 	}
 </style>
