@@ -29,22 +29,24 @@ jobs:
         with:
           node-version: 22
 
-      - name: Set Public Base Path for quasar.config.js
+      - name: Dump PWD
         shell: bash
-        env:
-          NODE_ENV: '/${{ github.event.repository.name }}'
-        run: echo "$PUBLIC_BASE_PATH"
+        run: pwd
 
       - name: Install
         shell: bash
         env:
           NODE_ENV: Production
+          PUBLIC_BASE_PATH: '/${{ github.event.repository.name }}'
         run: |
+          echo $PUBLIC_BASE_PATH;
           npm ci;
 
-      - name: Dump PWD
+      - name: Set Public Base Path for quasar.config.js
         shell: bash
-        run: pwd
+        env:
+          PUBLIC_BASE_PATH: '/${{ github.event.repository.name }}'
+        run: echo $PUBLIC_BASE_PATH
 
       - name: Build
         shell: bash
