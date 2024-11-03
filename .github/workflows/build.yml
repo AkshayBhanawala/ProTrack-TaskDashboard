@@ -22,14 +22,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment:
-      name: Prod
+      name: GH_Pages
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Node
         uses: actions/setup-node@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
       - name: Install
         env:
           NODE_ENV: Production
