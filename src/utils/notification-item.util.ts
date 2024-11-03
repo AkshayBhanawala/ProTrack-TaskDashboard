@@ -1,8 +1,8 @@
 import moment from 'moment';
 
-import { Task } from 'src/models';
-import { NotificationItem } from 'src/models/NotificationItem.model';
-import { useNotificationItemsStore } from 'src/stores/store';
+import { Task } from '@/models';
+import { NotificationItem } from '@/models/NotificationItem.model';
+import { useNotificationItemsStore } from '@/stores/store';
 
 export function notifyItem_Welcome(): void {
 	const today = moment();

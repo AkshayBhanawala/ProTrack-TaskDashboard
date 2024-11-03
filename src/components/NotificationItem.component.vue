@@ -21,8 +21,8 @@
 <script setup lang="ts">
 	import { ref } from 'vue';
 
-	import { INotificationItem } from 'src/models/NotificationItem.model';
-	import { useNotificationItemsStore } from 'src/stores/store';
+	import { INotificationItem } from '@/models/NotificationItem.model';
+	import { useNotificationItemsStore } from '@/stores/store';
 
 	defineOptions({
 		name: 'NotificationItem',

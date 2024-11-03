@@ -77,11 +77,11 @@
 	import { computed, ref, useTemplateRef } from 'vue';
 	import { VueApexChartsComponent } from 'vue3-apexcharts';
 
-	import ToolTip from 'src/components/ToolTip.component.vue';
-	import { DailyTotal, TaskCountType } from 'src/models';
-	import { ApexChartEvents, ChartOptions, WeeklyOverviewData, ChartData, ChartSeries, ChartType } from 'src/models/WeeklyOverview.model';
-	import { useBiWeeklyTasksStore } from 'src/stores/store';
-	import { notifyToast_NotImplemented } from 'src/utils/notification-toast.util';
+	import ToolTip from '@/components/ToolTip.component.vue';
+	import { DailyTotal, TaskCountType } from '@/models';
+	import { ApexChartEvents, ChartOptions, WeeklyOverviewData, ChartData, ChartSeries, ChartType } from '@/models/WeeklyOverview.model';
+	import { useBiWeeklyTasksStore } from '@/stores/store';
+	import { notifyToast_NotImplemented } from '@/utils/notification-toast.util';
 	interface Props {
 		photoOnly?: boolean;
 		noBorder?: boolean;

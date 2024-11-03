@@ -22,7 +22,7 @@
 	import { EventBus } from 'quasar';
 	import { inject } from 'vue';
 
-	import ToolTip from 'src/components/ToolTip.component.vue';
+	import ToolTip from '@/components/ToolTip.component.vue';
 
 	interface Props {
 		photoOnly?: boolean;

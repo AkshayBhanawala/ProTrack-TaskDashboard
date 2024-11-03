@@ -45,8 +45,8 @@
 	import moment, { Moment } from 'moment';
 	import { computed } from 'vue';
 
-	import ToolTip from 'src/components/ToolTip.component.vue';
-	import { useBiWeeklyTasksStore, useSelectedDayStore } from 'src/stores/store';
+	import ToolTip from '@/components/ToolTip.component.vue';
+	import { useBiWeeklyTasksStore, useSelectedDayStore } from '@/stores/store';
 	import { TaskCount, TaskCountType, taskCountTypeColorMap, taskCountTypeLabelMap } from 'src/models';
 
 	const byWeeklyTasksStore = useBiWeeklyTasksStore();

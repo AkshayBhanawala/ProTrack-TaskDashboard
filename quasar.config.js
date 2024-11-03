@@ -55,13 +55,13 @@ module.exports = configure(function (/* ctx */) {
 				browser: ['es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1'],
 				node: 'node20'
 			},
-			// chainWebpack(chain, { isServer, isClient }) {
-			// 	chain.resolve.alias
-			// 		.set('@', path.resolve(__dirname, './src'))
-			// },
-			// alias: {
-			// 	'@': path.resolve(__dirname, './src')
-			// },
+			chainWebpack(chain, { isServer, isClient }) {
+				chain.resolve.alias
+					.set('@', path.resolve(__dirname, './src'))
+			},
+			alias: {
+				'@': path.resolve(__dirname, './src')
+			},
 
 			vueRouterMode: 'hash', // available values: 'hash', 'history'
 			// vueRouterBase,

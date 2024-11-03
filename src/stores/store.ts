@@ -2,11 +2,11 @@ import moment, { Moment } from 'moment';
 import { defineStore } from 'pinia';
 import { Loading, Screen } from 'quasar';
 
-import { BiWeeklyTasks, getRandomTagColor, Note, PartialTaskStatus, TagColorMap, TagColorMapType, TagNames, TagNameType, Task, TaskCount, TaskCountType } from 'src/models';
-import { NotificationItem } from 'src/models/NotificationItem.model';
-import { MinMaxDates, WeeklyOverviewData } from 'src/models/WeeklyOverview.model';
-import { LocalStorageKeys, LocalStorageUtil } from 'src/utils/localStorage.util';
-import { notifyItem_TaskAdded, notifyItem_TaskDeleted, notifyItem_TaskUpdated } from 'src/utils/notification-item.util';
+import { BiWeeklyTasks, getRandomTagColor, Note, PartialTaskStatus, TagColorMap, TagColorMapType, TagNames, TagNameType, Task, TaskCount, TaskCountType } from '@/models';
+import { NotificationItem } from '@/models/NotificationItem.model';
+import { MinMaxDates, WeeklyOverviewData } from '@/models/WeeklyOverview.model';
+import { LocalStorageKeys, LocalStorageUtil } from '@/utils/localStorage.util';
+import { notifyItem_TaskAdded, notifyItem_TaskDeleted, notifyItem_TaskUpdated } from '@/utils/notification-item.util';
 
 function isScreenMini() {
 	return Screen?.lt?.lg || (Screen?.gt?.sm && Screen?.lt?.lg);

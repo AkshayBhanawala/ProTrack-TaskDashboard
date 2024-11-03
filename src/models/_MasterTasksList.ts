@@ -1,7 +1,7 @@
 import moment from 'moment';
 
-import { ITask, Task, BiWeeklyTasks, Subtask } from 'src/models/Task.model';
-import { TagNames } from 'src/models/TaskTag.model';
+import { ITask, Task, BiWeeklyTasks, Subtask } from '@/models/Task.model';
+import { TagNames } from '@/models/TaskTag.model';
 
 export function getBiWeeklyTasks(): Promise<BiWeeklyTasks> {
 	const lastWeekStart = moment().subtract(1, 'week').startOf('week');

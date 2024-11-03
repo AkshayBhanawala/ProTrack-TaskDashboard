@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { BiWeeklyTasks, IBiWeeklyTasks, INote, ITask, Note, Subtask, Task, TaskStatus } from 'src/models';
+import { BiWeeklyTasks, IBiWeeklyTasks, INote, ITask, Note, Subtask, Task, TaskStatus } from '@/models';
 
 export interface StorageItem<T> {
 	value: T;

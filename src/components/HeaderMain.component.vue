@@ -59,12 +59,12 @@
 	import { Dialog } from 'quasar';
 	import { computed, ref } from 'vue';
 
-	import AccountInfoCard from 'src/components/AccountInfoCard.component.vue';
-	import TaskDialog from 'src/components/dialogs/TaskDialog.component.vue';
-	import ToolTip from 'src/components/ToolTip.component.vue';
-	import { Task } from 'src/models';
-	import { useBiWeeklyTasksStore, useLeftSideBarStore, useNotificationItemsStore, useRightSideBarStore } from 'src/stores/store';
-	import { notifyToast_NotImplemented, notifyToast_TaskAdded } from 'src/utils/notification-toast.util';
+	import AccountInfoCard from '@/components/AccountInfoCard.component.vue';
+	import TaskDialog from '@/components/dialogs/TaskDialog.component.vue';
+	import ToolTip from '@/components/ToolTip.component.vue';
+	import { Task } from '@/models';
+	import { useBiWeeklyTasksStore, useLeftSideBarStore, useNotificationItemsStore, useRightSideBarStore } from '@/stores/store';
+	import { notifyToast_NotImplemented, notifyToast_TaskAdded } from '@/utils/notification-toast.util';
 
 	defineOptions({
 		name: 'HeaderMain',
