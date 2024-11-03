@@ -36,7 +36,7 @@ jobs:
       - name: Install
         shell: bash
         env:
-          NODE_ENV: Production
+          NODE_ENV: Production2
           PUBLIC_BASE_PATH: '/${{ github.event.repository.name }}'
         run: |
           echo $PUBLIC_BASE_PATH;
