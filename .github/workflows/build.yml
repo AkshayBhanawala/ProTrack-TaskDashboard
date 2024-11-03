@@ -1,36 +1,43 @@
 name: Build & Deploy
+
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        type: string
-        default: GITHUB
-        required: false
+  # Runs on pushes targeting the default branch
   push:
-    branches:
-      - main
+    branches: ['master', 'main']
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
 
 jobs:
+  # Build job
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
+    environment:
+      name: Prod
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Node
         uses: actions/setup-node@v4
-        with:
-          node-version: '22.x'
-      - name: Cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
       - name: Install
-        run: npm ci
+        env:
+          NODE_ENV: Production
+        run: |
+          npm ci;
       - name: Build
         run: npm run build
+        shell: bash
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         env:
