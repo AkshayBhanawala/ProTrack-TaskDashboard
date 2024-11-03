@@ -1,4 +1,4 @@
-import { createPinia } from 'pinia'
+import { createPinia, getActivePinia, Pinia, Store } from 'pinia'
 import { store } from 'quasar/wrappers'
 import { Router } from 'vue-router';
 
@@ -12,6 +12,32 @@ declare module 'pinia' {
 		readonly router: Router;
 	}
 }
+
+interface ExtendedPinia extends Pinia {
+	_s: Map<string, Store>;
+}
+
+export function resetPiniaStores(): void {
+	const pinia = getActivePinia() as ExtendedPinia;
+	if (!pinia) {
+		return;
+	}
+	const storesToReset: string[] = [
+		// 'GlobalSpinnerState',
+		// 'LeftSideBarState',
+		// 'RightSideBarState',
+		'BiWeeklyTasks',
+		'Notifications',
+		// 'NotesState',
+		'SelectedDate',
+		'TaskTags'
+	];
+	pinia._s.forEach(store => {
+		if (storesToReset.includes(store.$id)) {
+			store.$reset();
+		}
+	});
+};
 
 /*
  * If not building with SSR mode, you can

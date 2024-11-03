@@ -3,8 +3,10 @@ import { defineStore } from 'pinia';
 import { Loading, Screen } from 'quasar';
 
 import { BiWeeklyTasks, getRandomTagColor, Note, PartialTaskStatus, TagColorMap, TagColorMapType, TagNames, TagNameType, Task, TaskCount, TaskCountType } from '@/models';
+import { NotificationItem } from '@/models/NotificationItem.model';
 import { MinMaxDates, WeeklyOverviewData } from '@/models/WeeklyOverview.model';
 import { LocalStorageKeys, LocalStorageUtil } from '@/utils/localStorage.util';
+import { notifyItem_TaskAdded, notifyItem_TaskDeleted, notifyItem_TaskUpdated } from '@/utils/notification-item.util';
 
 function isScreenMini() {
 	return Screen?.lt?.lg || (Screen?.gt?.sm && Screen?.lt?.lg);
@@ -61,14 +63,6 @@ export const useLeftSideBarStore = defineStore('LeftSideBarState', {
 		}),
 	},
 	actions: {
-		// toggleSideBar() {
-		// 	console.log(this, this.isOpen, this.isMiniMode);
-		// 	if (this.isOpen) {
-		// 		if (this.isMini || isScreenMini()) {
-		// 			this.isMini = !this.isMini;
-		// 		}
-		// 	}
-		// },
 		toggleSideBar(): void {
 			this.isOpen = !this.isOpen;
 			LocalStorageUtil.set(LocalStorageKeys.LeftSideBarState, this.getState);
@@ -248,6 +242,7 @@ export const useBiWeeklyTasksStore = defineStore('BiWeeklyTasks', {
 			}
 			this.biWeeklyTasks = { ...this.biWeeklyTasks };
 			LocalStorageUtil.set(LocalStorageKeys.BiWeeklyTasks, this.biWeeklyTasks);
+			notifyItem_TaskAdded(newTask);
 		},
 		deleteThisWeekTask(deleteTask: Task): void {
 			const thisWeek = this.biWeeklyTasks?.thisWeek;
@@ -256,6 +251,7 @@ export const useBiWeeklyTasksStore = defineStore('BiWeeklyTasks', {
 				thisWeek[date] = thisWeek[date].filter(oldTask => oldTask.id !== deleteTask.id);
 				this.biWeeklyTasks = { ...this.biWeeklyTasks };
 				LocalStorageUtil.set(LocalStorageKeys.BiWeeklyTasks, this.biWeeklyTasks);
+				notifyItem_TaskDeleted();
 			}
 		},
 		updateThisWeekTask(updatedTask: Task): void {
@@ -269,6 +265,7 @@ export const useBiWeeklyTasksStore = defineStore('BiWeeklyTasks', {
 
 				this.biWeeklyTasks = { ...this.biWeeklyTasks };
 				LocalStorageUtil.set(LocalStorageKeys.BiWeeklyTasks, this.biWeeklyTasks);
+				notifyItem_TaskUpdated();
 			}
 		}
 	},
@@ -291,6 +288,24 @@ export const useTaskTagsStore = defineStore('TaskTags', {
 
 			this.tagColorMap = { ...this.tagColorMap };
 			LocalStorageUtil.set(LocalStorageKeys.TaskTagColorMap, this.tagColorMap);
+		}
+	}
+});
+
+export const useNotificationItemsStore = defineStore('Notifications', {
+	state: (): { notifications: NotificationItem[] } => ({
+		notifications: LocalStorageUtil.get<NotificationItem[]>(LocalStorageKeys.Notifications) || [],
+	}),
+	actions: {
+		addNotificationItem(notificationItem: NotificationItem): void {
+			this.notifications.push(notificationItem);
+			this.notifications = [...this.notifications];
+			LocalStorageUtil.set(LocalStorageKeys.Notifications, this.notifications);
+		},
+		removeNotificationItem(notificationItem: NotificationItem): void {
+			this.notifications = this.notifications.filter(n => n.id !== notificationItem.id);
+			this.notifications = [...this.notifications];
+			LocalStorageUtil.set(LocalStorageKeys.Notifications, this.notifications);
 		}
 	}
 });

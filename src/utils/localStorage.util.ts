@@ -16,6 +16,7 @@ export enum LocalStorageKeys {
 	SelectedDate = 'SelectedDate',
 	TaskTags = 'TaskTags',
 	TaskTagColorMap = 'TaskTagColorMap',
+	Notifications = 'Notifications',
 }
 
 export class LocalStorageUtil {

@@ -23,7 +23,6 @@
 	import { inject } from 'vue';
 
 	import ToolTip from '@/components/ToolTip.component.vue';
-	import { LocalStorageUtil } from '@/utils/localStorage.util';
 
 	interface Props {
 		photoOnly?: boolean;
@@ -43,8 +42,6 @@
 	const bus = inject<EventBus>('bus');
 
 	function newData() {
-		LocalStorageUtil.clear();
-		// location.reload();
 		bus?.emit('newData');
 	}
 </script>

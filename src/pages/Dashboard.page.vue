@@ -42,7 +42,10 @@
 	import WeeklyOverviewCard from '@/components/dashboard/WeeklyOverviewCard.component.vue';
 	import { usePromiseLoading } from '@/composables/useDataFetch.composable';
 	import { getBiWeeklyTasks } from '@/models/_MasterTasksList';
+	import { resetPiniaStores } from '@/stores';
 	import { useBiWeeklyTasksStore, useGlobalSpinnerStore } from '@/stores/store';
+	import { LocalStorageUtil } from '@/utils/localStorage.util';
+	import { notifyItem_Welcome } from '@/utils/notification-item.util';
 
 	interface Props {
 		photoOnly?: boolean;
@@ -78,10 +81,14 @@
 			setNewData();
 		}
 		bus?.on('newData', () => {
+			// location.reload();
 			setNewData();
 		});
 
 		function setNewData() {
+			LocalStorageUtil.clear();
+			resetPiniaStores();
+
 			const { loadingEvent, fetchData } = usePromiseLoading();
 			const spinner = useGlobalSpinnerStore();
 			loadingEvent?.on('change', (isLoading) => {
@@ -91,8 +98,8 @@
 			fetchData(getBiWeeklyTasks).then((biWeeklyTasks) => {
 				if (biWeeklyTasks) {
 					console.log('biWeeklyTasks:', biWeeklyTasks);
-
 					biWeeklyTaskStore.setBiWeeklyTasks(biWeeklyTasks);
+					notifyItem_Welcome();
 				}
 			});
 		}

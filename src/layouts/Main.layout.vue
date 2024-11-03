@@ -36,6 +36,7 @@
 			@update:model-value="(state) => rightSideBarState.setOpen(state)"
 		>
 			<!-- drawer content -->
+			<NotificationSideBar />
 		</q-drawer>
 
 		<!-- <FooterMain /> -->
@@ -48,6 +49,7 @@
 	import FooterMain from '@/components/FooterMain.component.vue';
 	import HeaderMain from '@/components/HeaderMain.component.vue';
 	import MenuSideBar from '@/components/MenuSideBar.component.vue';
+	import NotificationSideBar from '@/components/NotificationSideBar.component.vue';
 	import { useLeftSideBarStore, useRightSideBarStore } from 'src/stores/store';
 
 	defineOptions({
@@ -56,6 +58,7 @@
 			HeaderMain,
 			FooterMain,
 			MenuSideBar,
+			NotificationSideBar,
 		},
 	});
 
@@ -83,6 +86,10 @@
 	:deep() {
 		.q-drawer--right {
 			max-width: 350px;
+
+			.q-drawer__content {
+				box-sizing: border-box;
+			}
 		}
 		.q-drawer__opener.fixed-right + .q-drawer__backdrop:not(.hidden) + .q-drawer--right {
 			overflow: hidden;

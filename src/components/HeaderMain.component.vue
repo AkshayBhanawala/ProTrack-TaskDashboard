@@ -46,7 +46,7 @@
 					class="color-secondary notifications-btn"
 					@click="rightSideBarState.toggleSideBar()"
 				>
-					<q-badge floating rounded class="badge">2</q-badge>
+					<q-badge v-if="notifications.length" floating rounded class="badge">{{ notifications.length }}</q-badge>
 					<ToolTip text="Notifications" />
 				</q-btn>
 				<AccountInfoCard photo-only no-border no-online-status style="cursor: pointer; margin-left: 5px" />
@@ -57,14 +57,14 @@
 
 <script setup lang="ts">
 	import { Dialog } from 'quasar';
-	import { ref } from 'vue';
+	import { computed, ref } from 'vue';
 
 	import TaskDialog from './dialogs/TaskDialog.component.vue';
 
 	import AccountInfoCard from '@/components/AccountInfoCard.component.vue';
 	import ToolTip from '@/components/ToolTip.component.vue';
 	import { Task } from '@/models';
-	import { useBiWeeklyTasksStore, useLeftSideBarStore, useRightSideBarStore } from '@/stores/store';
+	import { useBiWeeklyTasksStore, useLeftSideBarStore, useNotificationItemsStore, useRightSideBarStore } from '@/stores/store';
 	import { notifyToast_NotImplemented, notifyToast_TaskAdded } from '@/utils/notification-toast.util';
 
 	defineOptions({
@@ -79,6 +79,8 @@
 	const leftSideBarState = useLeftSideBarStore();
 	const rightSideBarState = useRightSideBarStore();
 	const biWeeklyTaskStore = useBiWeeklyTasksStore();
+	const notificationsStore = useNotificationItemsStore();
+	const notifications = computed(() => notificationsStore.notifications);
 
 	function openAddNewTaskDialog() {
 		Dialog.create({
