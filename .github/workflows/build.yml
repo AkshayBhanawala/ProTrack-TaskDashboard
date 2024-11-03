@@ -35,6 +35,9 @@ jobs:
           NODE_ENV: Production
         run: |
           npm ci;
+      - name: Dump PWD
+        run: pwd
+        shell: bash
       - name: Build
         run: npm run build
         shell: bash
