@@ -55,7 +55,10 @@ module.exports = configure(function (/* ctx */) {
 				browser: ['es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1'],
 				node: 'node20'
 			},
-
+			chainWebpack(chain, { isServer, isClient }) {
+				chain.resolve.alias
+					.set('@', path.resolve(__dirname, './src'))
+			},
 			alias: {
 				'@': path.resolve(__dirname, './src')
 			},
@@ -105,15 +108,7 @@ module.exports = configure(function (/* ctx */) {
 						lintCommand: 'eslint "./**/*.{js,ts,mjs,cjs,vue}"'
 					}
 				}, { server: false }]
-			],
-			extendWebpack(cfg, { isServer, isClient }) {
-				cfg.resolve.alias = {
-					...cfg.resolve.alias, // This adds the existing alias
-
-					// Add your own alias like this
-					'@': path.resolve(__dirname, './src'),
-				}
-			}
+			]
 		},
 
 		// Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
