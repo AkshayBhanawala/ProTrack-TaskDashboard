@@ -21,7 +21,7 @@ body {
 	width: 50px;
 
 	img {
-		background: url('images/logo-bg-gradient.jpg') no-repeat center center;
+		background: url('/images/logo-bg-gradient.jpg') no-repeat center center;
 		background-size: cover;
 	}
 }
@@ -141,7 +141,7 @@ hr {
 		top: 0;
 		left: 0;
 		position: absolute;
-		background: url('images/logo-bg-gradient.jpg') no-repeat center center;
+		background: url('/images/logo-bg-gradient.jpg') no-repeat center center;
 		background-size: cover;
 		opacity: 0.4;
 		pointer-events: inherit;
@@ -155,7 +155,7 @@ hr {
 		&:before {
 			display: block;
 			content: "";
-			background: url(images/logo-mono-white-no-circle.svg) no-repeat center center;
+			background: url('/images/logo-mono-white-no-circle.svg') no-repeat center center;
 			background-size: cover;
 			opacity: 1;
 			height: 15vw;

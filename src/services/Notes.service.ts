@@ -6,7 +6,7 @@ import { Note } from '../models/Note.model';
 export const notesService = {
 	async fetchAllNotes(): Promise<Note[]> {
 		try {
-			const response = await axios.get('/data/dashboard/notes.json');
+			const response = await axios.get('data/dashboard/notes.json');
 			const notes = response.data.notes;
 
 			return notes.map((note: Note) => {

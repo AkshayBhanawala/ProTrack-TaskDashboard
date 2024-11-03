@@ -62,14 +62,12 @@
 
 <script setup lang="ts">
 	import { QCardSection } from 'quasar';
-	import { register, SwiperContainer } from 'swiper/element/bundle';
 	import { computed, onMounted, ref } from 'vue';
 
 	import ToolTip from '@/components/ToolTip.component.vue';
 	import { useNotesStore } from '@/stores/store';
 	import { notifyToast_NotImplemented } from '@/utils/notification-toast.util';
 	import { notesService } from 'src/services';
-	register();
 
 	defineOptions({
 		name: 'TaskForTheDaySection',
@@ -78,15 +76,7 @@
 		},
 	});
 
-	withDefaults(defineProps<Props>(), {});
-
-	interface Props {
-		photoOnly?: boolean;
-		noBorder?: boolean;
-		noOnlineStatus?: boolean;
-	}
-
-	const swiperRef = ref<SwiperContainer>();
+	const swiperRef = ref();
 
 	const notesStore = useNotesStore();
 	const notes = computed(() => {
@@ -97,8 +87,8 @@
 	});
 
 	onMounted(async () => {
-		const serviceNotes = await notesService.fetchAllNotes();
-		notesStore.setNotes(serviceNotes);
+		const fetchedNotes = await notesService.fetchAllNotes();
+		notesStore.setNotes(fetchedNotes);
 	});
 
 	function nextNote() {
