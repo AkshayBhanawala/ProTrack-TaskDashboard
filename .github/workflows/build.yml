@@ -22,7 +22,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment:
-      name: GH_Pages
+      name: github-pages
     steps:
       - name: Checkout
         uses: actions/checkout@v4
