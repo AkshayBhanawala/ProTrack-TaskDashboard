@@ -90,6 +90,8 @@
 
 			fetchData(getBiWeeklyTasks).then((biWeeklyTasks) => {
 				if (biWeeklyTasks) {
+					console.log('biWeeklyTasks:', biWeeklyTasks);
+
 					biWeeklyTaskStore.setBiWeeklyTasks(biWeeklyTasks);
 				}
 			});

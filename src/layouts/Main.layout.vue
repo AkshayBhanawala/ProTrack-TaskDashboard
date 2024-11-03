@@ -16,6 +16,7 @@
 				show-if-above
 				side="left"
 				bordered
+				:breakpoint="1400"
 				v-model:model-value="leftSideBarState.isOpen"
 				@update:model-value="(state) => leftSideBarState.setOpen(state)"
 			>
@@ -76,24 +77,15 @@
 		}
 	}
 	:deep() {
-		.q-drawer.q-drawer--right {
+		.q-drawer__opener.fixed-right + .q-drawer__backdrop:not(.hidden) + .q-drawer--right {
 			overflow: hidden;
 			box-sizing: content-box;
-
 			background-color: $background;
 			box-shadow: 0px 0px 20px -5px rgba(0, 32, 43, 0.8);
 			border-radius: 30px;
 			border: 4px solid rgba($separator-color, 1);
 			outline: 4px solid rgba($separator-color, 0.4);
 			margin-right: 20px;
-
-			// background: url('images/notification-sidebar-bg.webp') no-repeat;
-			// background-position: 100% 50%;
-			// background-size: cover;
-			// box-shadow: -10px 0px 50px 10px rgba(0, 32, 43, 0.35);
-			// border-top-left-radius: 40px;
-			// border-bottom-left-radius: 40px;
-			// outline: 10px solid rgba($separator, 0.7);
 		}
 	}
 </style>

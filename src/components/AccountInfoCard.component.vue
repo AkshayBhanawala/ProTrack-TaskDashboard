@@ -44,6 +44,7 @@
 
 	function newData() {
 		LocalStorageUtil.clear();
+		// location.reload();
 		bus?.emit('newData');
 	}
 </script>

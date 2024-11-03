@@ -14,7 +14,7 @@
 		<q-card-section horizontal class="calendar-date-cards">
 			<q-btn
 				v-for="date in dates"
-				:key="date.format('YYYY-MM-DD')"
+				:key="date.format('YYYY/MM/DD')"
 				:class="{
 					active: selectedDayStore.getSelectedDay.isSame(date, 'date'),
 					today: isToday(date),

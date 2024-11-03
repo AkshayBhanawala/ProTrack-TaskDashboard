@@ -1,7 +1,7 @@
 import axios from 'axios';
 import moment from 'moment';
 
-import { BaseTask, tags,Task } from '../models';
+import { BaseTask, TagColorMap, Task } from '../models';
 
 export const taskService = {
 	async fetchTasks(): Promise<Task[]> {
@@ -21,13 +21,12 @@ export const taskService = {
 						new BaseTask(
 							subtask.label,
 							subtask.isCompleted,
-							moment(subtask.date)
 						)
 					);
 				}
 
 				if (task.tags) {
-					mappedTask.tags = task.tags.map((tagName: string) => tags[tagName]);
+					mappedTask.tags = task.tags.map((tagName: string) => TagColorMap[tagName]);
 				}
 
 				return mappedTask;

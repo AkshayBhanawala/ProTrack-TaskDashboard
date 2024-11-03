@@ -13,7 +13,16 @@
 					<div>ProTrack</div>
 				</div>
 				<div class="row inline justify-center items-center search-wrapper" style="gap: 15px">
-					<q-input dark dense rounded standout v-model="searchText" placeholder="Search" :class="{ 'has-value': searchText?.length }">
+					<q-input
+						dark
+						dense
+						rounded
+						standout
+						v-model="searchText"
+						placeholder="Search"
+						:class="{ 'has-value': searchText?.length }"
+						@focus="notifyNotImplemented()"
+					>
 						<template v-slot:prepend>
 							<q-icon name="sym_r_search" class="q-mr-sm" />
 						</template>
@@ -25,7 +34,7 @@
 			</q-toolbar-title>
 
 			<div class="row justify-center items-center actions-wrapper">
-				<q-btn unelevated color="primary" icon="sym_r_add" label="Add Tasks" class="add-task-btn">
+				<q-btn unelevated color="primary" icon="sym_r_add" label="Add Tasks" class="add-task-btn" @click="openAddNewTaskDialog()">
 					<ToolTip text="Add Tasks" />
 				</q-btn>
 				<q-btn
@@ -47,11 +56,16 @@
 </template>
 
 <script setup lang="ts">
+	import { Dialog } from 'quasar';
 	import { ref } from 'vue';
+
+	import TaskDialog from './dialogs/TaskDialog.component.vue';
 
 	import AccountInfoCard from '@/components/AccountInfoCard.component.vue';
 	import ToolTip from '@/components/ToolTip.component.vue';
-	import { useLeftSideBarStore, useRightSideBarStore } from '@/stores/store';
+	import { Task } from '@/models';
+	import { useBiWeeklyTasksStore, useLeftSideBarStore, useRightSideBarStore } from '@/stores/store';
+	import { notifyNotImplemented, notifyTaskAdded } from '@/utils/notifications.util';
 
 	defineOptions({
 		name: 'HeaderMain',
@@ -64,6 +78,22 @@
 	const searchText = ref('');
 	const leftSideBarState = useLeftSideBarStore();
 	const rightSideBarState = useRightSideBarStore();
+	const biWeeklyTaskStore = useBiWeeklyTasksStore();
+
+	function openAddNewTaskDialog() {
+		Dialog.create({
+			component: TaskDialog,
+			componentProps: {
+				taskOperation: 'ADD',
+			},
+		})
+			.onOk((newTask: Task) => {
+				biWeeklyTaskStore.addNewTask(newTask);
+				notifyTaskAdded();
+			})
+			.onCancel(() => {})
+			.onDismiss(() => {});
+	}
 </script>
 
 <style scoped lang="scss">

@@ -11,7 +11,7 @@ body {
 	&:after {
 		@include grainy-background-psuedo-element;
 		opacity: 0.35;
-		z-index: 9000;
+		z-index: 10000;
 		position: fixed;
 	}
 }
@@ -129,6 +129,7 @@ hr {
 
 
 .q-drawer__backdrop,
+.q-dialog__backdrop,
 .global-spinner-wrapper {
 	backdrop-filter: blur(10px);
 
@@ -186,5 +187,103 @@ hr {
 	100% {
 		transform: rotate(-360deg);
 		opacity: 0.8;
+	}
+}
+
+.q-dialog {
+	.q-card {
+		border-radius: 20px;
+		box-shadow: rgba(0, 0, 0, 0.04) 0px 30px 75px -5px, rgba($text, 0.5) 0px 20px 35px -5px;
+	}
+}
+
+.q-field {
+	.q-field__inner {
+		.q-field__control {
+			border-radius: 16px;
+			font-size: 16px;
+		}
+	}
+
+	&.q-field--dense {
+		.q-field__control {
+			border-radius: 12px;
+		}
+	}
+}
+
+.q-notifications__list {
+	&.q-notifications__list--top {
+		top: 95px;
+	}
+}
+
+.notification-popup {
+	border-radius: 30px;
+	padding: 0;
+	user-select: none;
+	box-shadow: none;
+
+	&.bg-warning {
+		box-shadow: rgba(0, 0, 0, 0.1) 0px 25px 30px -20px,
+			rgba($warning, 0.5) 0px 20px 25px -15px;
+	}
+
+	&.bg-negative {
+		box-shadow: rgba(0, 0, 0, 0.1) 0px 25px 30px -20px,
+			rgba($negative, 0.5) 0px 20px 25px -15px;
+	}
+
+	&.bg-positive {
+		box-shadow: rgba(0, 0, 0, 0.1) 0px 25px 30px -20px,
+			rgba($positive, 0.5) 0px 20px 25px -15px;
+	}
+
+	&.bg-info {
+		box-shadow: rgba(0, 0, 0, 0.1) 0px 25px 30px -20px,
+			rgba($info, 0.5) 0px 20px 25px -15px;
+	}
+
+	.q-notification__wrapper {
+		padding: 0 16px;
+		border-radius: 30px;
+
+		.q-notification__progress {
+			display: flex;
+			justify-content: center;
+			align-items: flex-end;
+			left: 0px;
+			right: 0px;
+			height: 100%;
+			width: calc(100%);
+			border-radius: 30px;
+			background-color: transparent;
+			opacity: 0.15;
+			overflow: hidden;
+			animation: none;
+			transform: none;
+
+			&:before {
+				position: absolute;
+				display: block;
+				// height: 3px;
+				height: 100%;
+				width: 90%;
+				content: '';
+				background-color: currentColor;
+				bottom: 0;
+				transform: scaleX(0);
+				animation: q-notif-progress linear;
+				animation-duration: inherit;
+			}
+		}
+
+		.q-notification__actions {
+			color: inherit !important;
+
+			button {
+				color: inherit !important;
+			}
+		}
 	}
 }

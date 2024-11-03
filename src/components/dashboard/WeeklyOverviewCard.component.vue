@@ -2,8 +2,15 @@
 	<q-card class="calendar-section">
 		<q-card-section vertical class="row justify-between items-center q-pb-none">
 			<span class="title">Weekly Overview</span>
-			<q-btn outline dense rounded icon="sym_r_bar_chart" class="color-tertiary border-separator graph-change-btn">
-				<ToolTip text="Bar Graph" />
+			<q-btn
+				outline
+				dense
+				rounded
+				:icon="chartType === 'line' ? 'sym_r_bar_chart' : 'sym_r_ssid_chart'"
+				class="color-tertiary border-separator chart-change-btn"
+				@click="toggleChartType()"
+			>
+				<ToolTip :text="chartType === 'line' ? 'Bar Chart' : 'Line Chart'" />
 			</q-btn>
 		</q-card-section>
 
@@ -39,12 +46,12 @@
 				</div>
 
 				<div class="q-mt-md actions">
-					<q-btn outline class="btn" icon="sym_r_menu_book" label="Open Tasks" />
+					<q-btn outline class="btn" icon="sym_r_menu_book" label="Open Tasks" @click="notifyNotImplemented()" />
 				</div>
 			</q-card-section>
 
-			<q-card-section class="graph" ref="graphRef">
-				<span v-if="graphBorderStyle" class="border" :style="graphBorderStyle"></span>
+			<q-card-section class="chart" ref="chartRef">
+				<span v-if="chartBorderStyle" class="border" :style="chartBorderStyle"></span>
 				<apexchart
 					ref="apexChartRef"
 					:width="chartOptions?.chart?.width ?? '100%'"
@@ -70,9 +77,9 @@
 
 	import ToolTip from '@/components/ToolTip.component.vue';
 	import { DailyTotal, TaskCountType } from '@/models';
-	import { ApexChartEvents, ChartSeries, ChartOptions, WeeklyOverviewData, ChartData } from '@/models/WeeklyOverview.model';
+	import { ApexChartEvents, ChartOptions, WeeklyOverviewData, ChartData, ChartSeries, ChartType } from '@/models/WeeklyOverview.model';
 	import { useBiWeeklyTasksStore } from '@/stores/store';
-
+	import { notifyNotImplemented } from '@/utils/notifications.util';
 	interface Props {
 		photoOnly?: boolean;
 		noBorder?: boolean;
@@ -88,30 +95,30 @@
 
 	withDefaults(defineProps<Props>(), {});
 
-	const graphRef = useTemplateRef<QCardSection>('graphRef');
+	const chartType = ref<ChartType>('line');
+	const chartRef = useTemplateRef<QCardSection>('chartRef');
 	const apexChartRef = useTemplateRef<VueApexChartsComponent>('apexChartRef');
-	const graphBorderStyle = ref({});
-	const chartOptions = ref<ApexOptions>();
+	const chartBorderStyle = ref({});
 	const biWeeklyTasksStore = useBiWeeklyTasksStore();
 
 	const chartEvents: ApexChartEvents = {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		mounted: function (chartContext, config: ApexOptions) {
 			// console.log('mounted:', chartContext, config);
-			updateGraphBorderStyle(chartContext);
+			updateChartBorderStyle(chartContext);
 		},
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		updated: function (chartContext, config: ApexOptions) {
 			// console.log('updated:', chartContext, config);
-			updateGraphBorderStyle(chartContext);
+			updateChartBorderStyle(chartContext);
 		},
 	};
-	chartOptions.value = ChartOptions.line(chartEvents);
 
 	const totalTaskCounts = computed((): DailyTotal => {
+		const counts = biWeeklyTasksStore.getTasksCountData;
 		return {
-			[TaskCountType.THIS_WEEK_DAILY_TOTAL]: biWeeklyTasksStore.getTasksCountData[TaskCountType.THIS_WEEK_DAILY_TOTAL],
-			[TaskCountType.LAST_WEEK_DAILY_TOTAL]: biWeeklyTasksStore.getTasksCountData[TaskCountType.LAST_WEEK_DAILY_TOTAL],
+			[TaskCountType.THIS_WEEK_DAILY_TOTAL]: counts[TaskCountType.THIS_WEEK_DAILY_TOTAL],
+			[TaskCountType.LAST_WEEK_DAILY_TOTAL]: counts[TaskCountType.LAST_WEEK_DAILY_TOTAL],
 		};
 	});
 
@@ -121,12 +128,18 @@
 
 	const chartSeries = computed((): ChartSeries[] => {
 		const charSeries = getWeeklyOverviewSeries(weeklyOverviewData.value);
-		// apexChartRef.value?.updateSeries(series);
+		// console.log('chartSeries:', charSeries);
+		updateChartOptions();
 		return charSeries;
 	});
 
+	const currentChartOptions = ref(ChartOptions.line(chartEvents, { custom: { series: [...chartSeries.value] } }));
+	const chartOptions = computed((): ApexOptions => {
+		return ChartOptions.extend(currentChartOptions.value, { custom: { series: [...chartSeries.value] } });
+	});
+
 	const thisWeekCompletedCount = computed((): number => {
-		const todayDay = new Date().getDay() - 1;
+		const todayDay = new Date().getDay();
 		let thisWeekCompletedCount = 0;
 		for (let i = 0; i <= todayDay; i++) {
 			thisWeekCompletedCount += weeklyOverviewData.value.thisWeek[i];
@@ -144,10 +157,18 @@
 		const lastWeekCompletePercent = getCompletePercent(lastWeekCounts);
 		const thisWeekCompletePercent = getCompletePercent(thisWeekCounts);
 
-		return Number((((thisWeekCompletePercent - lastWeekCompletePercent) / lastWeekCompletePercent) * 100).toFixed(2));
+		let changePercent = 0;
+		if (lastWeekCompletePercent === 0) {
+			changePercent = thisWeekCompletePercent;
+		} else if (thisWeekCompletePercent === 0) {
+			changePercent = -lastWeekCompletePercent;
+		} else {
+			changePercent = ((thisWeekCompletePercent - lastWeekCompletePercent) / lastWeekCompletePercent) * 100;
+		}
+		return Number(changePercent.toFixed(2));
 
 		function countsTillThisWeekDay(totalCounts: number[], chartData: ChartData): { total: number; completed: number } {
-			const todayDay = new Date().getDay() - 1; // Between 0-5 (monday-saturday)
+			const todayDay = new Date().getDay();
 			const counts = {
 				total: 0,
 				completed: 0,
@@ -159,9 +180,31 @@
 			return counts;
 		}
 		function getCompletePercent(counts: { total: number; completed: number }): number {
+			if (!counts.total) {
+				return 0;
+			}
 			return (counts.completed / counts.total) * 100;
 		}
 	});
+
+	function toggleChartType(): void {
+		if (chartType.value === 'line') {
+			chartType.value = 'bar';
+			currentChartOptions.value = ChartOptions.bar(chartEvents, { custom: { series: chartSeries.value } });
+		} else {
+			chartType.value = 'line';
+			currentChartOptions.value = ChartOptions.line(chartEvents, { custom: { series: chartSeries.value } });
+		}
+		apexChartRef?.value?.updateOptions({ custom: { series: chartSeries.value } }, true, true, true);
+	}
+
+	function updateChartOptions(): void {
+		setTimeout(() => {
+			if (apexChartRef?.value) {
+				apexChartRef?.value?.updateOptions({ custom: { series: chartSeries.value } }, true, true, true);
+			}
+		}, 0);
+	}
 
 	function getWeeklyOverviewSeries(weeklyOverviewData: WeeklyOverviewData): ChartSeries[] {
 		if (!weeklyOverviewData?.thisWeek?.length || !weeklyOverviewData?.lastWeek?.length) {
@@ -171,6 +214,8 @@
 		let thisWeekData;
 		if (lastIndexOfValue === -1 || lastIndexOfValue === weeklyOverviewData.thisWeek.length - 1) {
 			thisWeekData = weeklyOverviewData.thisWeek;
+		} else if (lastIndexOfValue === 0) {
+			thisWeekData = [weeklyOverviewData.thisWeek[0], 0];
 		} else {
 			thisWeekData = weeklyOverviewData.thisWeek.slice(0, lastIndexOfValue + 1);
 		}
@@ -190,22 +235,28 @@
 		];
 
 		function getDailyPercentages(completedTaskCounts: ChartData, totalTaskCounts: ChartData): ChartData {
-			return completedTaskCounts.map((item, index) => (item > 0 ? (item / totalTaskCounts[index]) * 100 : 0));
+			const percentages = completedTaskCounts.map((item, index) => {
+				if (!totalTaskCounts[index]) {
+					return 0;
+				}
+				return Number(((item / totalTaskCounts[index]) * 100).toFixed(2));
+			});
+			return percentages;
 		}
 	}
 
-	function updateGraphBorderStyle(apexChartContext): void {
+	function updateChartBorderStyle(apexChartContext): void {
 		const apexChartsGrid: HTMLDivElement = apexChartContext?.el?.getElementsByClassName('apexcharts-grid')?.item(0);
 		if (apexChartsGrid) {
 			const apexChartsGridRect: DOMRect = apexChartsGrid.getBoundingClientRect();
-			const graphWrapperRect: DOMRect = graphRef.value?.$el?.getBoundingClientRect();
+			const chartWrapperRect: DOMRect = chartRef.value?.$el?.getBoundingClientRect();
 			const paddingTop = 0;
 			const paddingX = 0;
-			graphBorderStyle.value = {
+			chartBorderStyle.value = {
 				width: `${apexChartsGridRect.width + paddingX * 2}px`,
 				height: `${apexChartsGridRect.height + paddingTop}px`,
-				top: `${apexChartsGridRect.top - graphWrapperRect.top - paddingTop}px`,
-				left: `${apexChartsGridRect.left - graphWrapperRect.left - paddingX}px`,
+				top: `${apexChartsGridRect.top - chartWrapperRect.top - paddingTop}px`,
+				left: `${apexChartsGridRect.left - chartWrapperRect.left - paddingX}px`,
 			};
 		}
 	}
@@ -226,7 +277,7 @@
 			font-weight: 500;
 		}
 
-		.graph-change-btn {
+		.chart-change-btn {
 			width: 36px;
 			height: 36px;
 			border-radius: 10px;
@@ -312,7 +363,7 @@
 			}
 		}
 
-		.graph {
+		.chart {
 			flex-grow: 1;
 			padding-bottom: 20px;
 

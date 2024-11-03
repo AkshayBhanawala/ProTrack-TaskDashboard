@@ -118,7 +118,9 @@ module.exports = configure(function (/* ctx */) {
 		framework: {
 			// Quasar plugins
 			plugins: [
-				'Loading'
+				'Loading',
+				'Dialog',
+				'Notify'
 			],
 
 			config: {
@@ -126,7 +128,7 @@ module.exports = configure(function (/* ctx */) {
 					delay: 200,
 					customClass: 'global-spinner-wrapper',
 					boxClass: 'global-spinner',
-				}
+				},
 			},
 
 			iconSet: 'material-symbols-rounded', // Quasar icon set

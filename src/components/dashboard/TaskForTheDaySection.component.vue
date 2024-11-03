@@ -3,7 +3,7 @@
 		<q-card-section vertical class="row justify-between items-center q-py-sm">
 			<span class="header2 title">Tasks for the day</span>
 			<div class="header-actions">
-				<q-btn unelevated dense rounded icon="sym_r_add" class="color-primary add-btn">
+				<q-btn unelevated dense rounded icon="sym_r_add" class="color-primary add-btn" @click="openAddNewTaskDialog">
 					<ToolTip text="Add Task" />
 				</q-btn>
 				<div class="group">
@@ -43,7 +43,7 @@
 						</div>
 						<div class="tags">
 							<q-icon name="sym_r_sell" size="sm" data-color="tertiary" class="tag-icon" />
-							<q-chip v-for="(tag, k) in task?.tags" :key="k" :label="tag.label" :data-color="tag.color" class="tag" />
+							<q-chip v-for="(tag, k) in task?.tags" :key="k" :label="taskTags[tag]" :data-color="tagColorMap[tag]" class="tag" />
 						</div>
 					</div>
 				</q-card-section>
@@ -52,13 +52,13 @@
 						{{ task?.subtasks?.filter((subtask) => subtask.isCompleted).length }} / {{ task?.subtasks?.length }} Completed
 					</div>
 					<q-card-actions horizontal class="note-actions">
-						<q-btn flat dense rounded icon="sym_r_edit" color="primary">
+						<q-btn flat dense rounded icon="sym_r_edit" color="primary" @click="openEditTaskDialog(task)">
 							<ToolTip text="Edit" />
 						</q-btn>
-						<q-btn flat dense rounded icon="sym_r_delete" color="negative">
+						<q-btn flat dense rounded icon="sym_r_delete" color="negative" @click="openDeleteTaskDialog(task)">
 							<ToolTip text="Delete" />
 						</q-btn>
-						<q-btn flat dense rounded icon="sym_r_steppers" color="secondary">
+						<q-btn flat dense rounded icon="sym_r_steppers" color="secondary" @click="notifyNotImplemented()">
 							<ToolTip text="More options" />
 						</q-btn>
 					</q-card-actions>
@@ -69,12 +69,16 @@
 </template>
 
 <script setup lang="ts">
-	import { QCardSection } from 'quasar';
+	import { Dialog, QCardSection } from 'quasar';
 	import { computed } from 'vue';
 
+	import ConfirmDialog from '../dialogs/ConfirmDialog.component.vue';
+	import TaskDialog from '../dialogs/TaskDialog.component.vue';
+
 	import ToolTip from '@/components/ToolTip.component.vue';
-	import { PartialTaskStatus } from '@/models';
-	import { useBiWeeklyTasksStore, useSelectedDayStore } from '@/stores/store';
+	import { PartialTaskStatus, TagColorMapType, TagNameType, Task, TaskDialogProps } from '@/models';
+	import { useBiWeeklyTasksStore, useSelectedDayStore, useTaskTagsStore } from '@/stores/store';
+	import { notifyTaskAdded, notifyTaskDeleted, notifyTaskUpdated, notifyNotImplemented } from '@/utils/notifications.util';
 
 	interface Props {
 		photoOnly?: boolean;
@@ -93,10 +97,61 @@
 
 	const biWeeklyTaskStore = useBiWeeklyTasksStore();
 	const selectedDayStore = useSelectedDayStore();
+	const taskTagsStore = useTaskTagsStore();
 
-	const tasks = computed(() => {
-		return biWeeklyTaskStore.getTaskForTheDayData;
-	});
+	const taskTags = computed<TagNameType>(() => taskTagsStore.tags);
+	const tagColorMap = computed<TagColorMapType>(() => taskTagsStore.tagColorMap);
+	const tasks = computed(() => biWeeklyTaskStore.getTaskForTheDayData);
+
+	function openAddNewTaskDialog() {
+		Dialog.create({
+			component: TaskDialog,
+			componentProps: {
+				taskOperation: 'ADD',
+			},
+		})
+			.onOk((newTask: Task) => {
+				biWeeklyTaskStore.addNewTask(newTask);
+				notifyTaskAdded();
+			})
+			.onCancel(() => {})
+			.onDismiss(() => {});
+	}
+
+	function openEditTaskDialog(task: Task) {
+		Dialog.create({
+			component: TaskDialog,
+			componentProps: {
+				taskOperation: 'EDIT',
+				editTask: task,
+			} as TaskDialogProps,
+		})
+			.onOk((updatedTask: Task) => {
+				biWeeklyTaskStore.updateThisWeekTask(updatedTask);
+				notifyTaskUpdated();
+			})
+			.onCancel(() => {})
+			.onDismiss(() => {});
+	}
+
+	function openDeleteTaskDialog(task: Task) {
+		Dialog.create({
+			component: ConfirmDialog,
+			componentProps: {
+				title: 'Delete this Task?',
+				message: 'This action cannot be undone!',
+				confirmLabel: 'Yeah!',
+				confirmColor: 'negative',
+				cancelLabel: 'Nah!',
+			},
+		})
+			.onOk(() => {
+				biWeeklyTaskStore.deleteThisWeekTask(task);
+				notifyTaskDeleted();
+			})
+			.onCancel(() => {})
+			.onDismiss(() => {});
+	}
 </script>
 
 <style scoped lang="scss">

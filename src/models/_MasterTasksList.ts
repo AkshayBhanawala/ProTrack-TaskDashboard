@@ -1,7 +1,7 @@
 import moment from 'moment';
 
-import { ITask, Task, BiWeeklyTasks } from './Task.model';
-import { TagName, tags } from './TaskTag.model';
+import { ITask, Task, BiWeeklyTasks, Subtask } from './Task.model';
+import { TagNames } from './TaskTag.model';
 
 export function getBiWeeklyTasks(): Promise<BiWeeklyTasks> {
 	const lastWeekStart = moment().subtract(1, 'week').startOf('week');
@@ -15,37 +15,34 @@ export function getBiWeeklyTasks(): Promise<BiWeeklyTasks> {
 		}, 2000);
 	});
 
-	function getRandomTasks(date: moment.Moment): Task[] {
-		const numTasks = Math.floor(Math.random() * 5) + 3; // 3 to 13 tasks
-		const shuffledTasks = [...masterTasksList].sort(() => Math.random() - 0.5);
-		const isFutureDate = date.isAfter(moment(), 'date');
-		return shuffledTasks
-			.slice(0, numTasks)
-			.map(task => new Task(
-				task.label,
-				isFutureDate ? false : Math.random() > 0.5,
-				date.clone(),
-				task.subtasks?.map(subtask => ({
-					...subtask,
-					isCompleted: isFutureDate ? false : Math.random() > 0.5
-				})),
-				task.tags?.map(tagName => tags[tagName])
-			));
-	};
-
 	function generateWeek(startDate: moment.Moment): { [key: string]: Task[] } {
 		const weekTasks: { [key: string]: Task[] } = {};
 
 		Array.from({ length: 7 }).forEach((_, index) => {
-			if (index === 0) return;
+			// if (index === 0) return;
 			const date = startDate.clone().add(index, 'days');
-			const dateKey = date.format('YYYY-MM-DD');
+			const dateKey = date.format('YYYY/MM/DD');
 			weekTasks[dateKey] = getRandomTasks(date);
 		});
 
 		return weekTasks;
 	};
 }
+
+function getRandomTasks(date: moment.Moment): Task[] {
+	const numTasks = Math.floor(Math.random() * 5) + 3; // 3 to 13 tasks
+	const shuffledTasks = [...masterTasksList].sort(() => Math.random() - 0.5);
+	const isFutureDate = date.isAfter(moment(), 'date');
+	return shuffledTasks
+		.slice(0, numTasks)
+		.map(task => new Task(
+			task.label,
+			isFutureDate ? false : Math.random() > 0.5,
+			date.clone(),
+			task.subtasks?.map(subtask => new Subtask(subtask.label, isFutureDate ? false : Math.random() > 0.5)),
+			task.tags
+		));
+};
 
 const masterTasksList: ITask[] = [
 	{
@@ -62,8 +59,8 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Donations,
-			TagName.Social
+			TagNames.Donations,
+			TagNames.Social
 		]
 	},
 	{
@@ -88,22 +85,22 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Sports,
-			TagName.SelfCare
+			TagNames.Sports,
+			TagNames.SelfCare
 		]
 	},
 	{
 		label: 'Buy new headset',
 		isCompleted: true,
 		tags: [
-			TagName.Shopping
+			TagNames.Shopping
 		]
 	},
 	{
 		label: 'Clean the room',
 		isCompleted: false,
 		tags: [
-			TagName.SelfCare
+			TagNames.SelfCare
 		]
 	},
 	{
@@ -120,8 +117,8 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Volunteer,
-			TagName.Animals
+			TagNames.Volunteer,
+			TagNames.Animals
 		]
 	},
 	{
@@ -138,8 +135,8 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Reading,
-			TagName.Literature
+			TagNames.Reading,
+			TagNames.Literature
 		]
 	},
 	{
@@ -156,16 +153,16 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Cooking,
-			TagName.Events
+			TagNames.Cooking,
+			TagNames.Events
 		]
 	},
 	{
 		label: 'Meditate for 20 minutes',
 		isCompleted: false,
 		tags: [
-			TagName.Wellness,
-			TagName.SelfCare
+			TagNames.Wellness,
+			TagNames.SelfCare
 		]
 	},
 	{
@@ -182,64 +179,64 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Work,
-			TagName.Productivity
+			TagNames.Work,
+			TagNames.Productivity
 		]
 	},
 	{
 		label: 'Join a yoga class',
 		isCompleted: false,
 		tags: [
-			TagName.Fitness,
-			TagName.SelfCare
+			TagNames.Fitness,
+			TagNames.SelfCare
 		]
 	},
 	{
 		label: 'Plant a tree',
 		isCompleted: true,
 		tags: [
-			TagName.Environment,
-			TagName.Sustainability
+			TagNames.Environment,
+			TagNames.Sustainability
 		]
 	},
 	{
 		label: 'Organize the bookshelf',
 		isCompleted: false,
 		tags: [
-			TagName.Organization,
-			TagName.Home
+			TagNames.Organization,
+			TagNames.Home
 		]
 	},
 	{
 		label: 'Watch a documentary',
 		isCompleted: true,
 		tags: [
-			TagName.Learning,
-			TagName.Entertainment
+			TagNames.Learning,
+			TagNames.Entertainment
 		]
 	},
 	{
 		label: 'Make a vision board',
 		isCompleted: false,
 		tags: [
-			TagName.Goals,
-			TagName.Creativity
+			TagNames.Goals,
+			TagNames.Creativity
 		]
 	},
 	{
 		label: 'Attend a cooking class',
 		isCompleted: true,
 		tags: [
-			TagName.Learning,
-			TagName.Cooking
+			TagNames.Learning,
+			TagNames.Cooking
 		]
 	},
 	{
 		label: 'Complete a puzzle',
 		isCompleted: false,
 		tags: [
-			TagName.Hobbies,
-			TagName.Fun
+			TagNames.Hobbies,
+			TagNames.Fun
 		]
 	},
 	{
@@ -256,8 +253,8 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Writing,
-			TagName.Creativity
+			TagNames.Writing,
+			TagNames.Creativity
 		]
 	},
 	{
@@ -274,32 +271,32 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Learning,
-			TagName.Languages
+			TagNames.Learning,
+			TagNames.Languages
 		]
 	},
 	{
 		label: 'Go for a nature walk',
 		isCompleted: true,
 		tags: [
-			TagName.Fitness,
-			TagName.Nature
+			TagNames.Fitness,
+			TagNames.Nature
 		]
 	},
 	{
 		label: 'Start a journal',
 		isCompleted: false,
 		tags: [
-			TagName.SelfCare,
-			TagName.Writing
+			TagNames.SelfCare,
+			TagNames.Writing
 		]
 	},
 	{
 		label: 'Watch a foreign film',
 		isCompleted: true,
 		tags: [
-			TagName.Entertainment,
-			TagName.Culture
+			TagNames.Entertainment,
+			TagNames.Culture
 		]
 	},
 	{
@@ -316,112 +313,112 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Travel,
-			TagName.Planning
+			TagNames.Travel,
+			TagNames.Planning
 		]
 	},
 	{
 		label: 'Practice guitar for an hour',
 		isCompleted: true,
 		tags: [
-			TagName.Music,
-			TagName.Hobbies
+			TagNames.Music,
+			TagNames.Hobbies
 		]
 	},
 	{
 		label: 'Update resume',
 		isCompleted: false,
 		tags: [
-			TagName.Career,
-			TagName.Productivity
+			TagNames.Career,
+			TagNames.Productivity
 		]
 	},
 	{
 		label: 'Try a new restaurant',
 		isCompleted: true,
 		tags: [
-			TagName.Food,
-			TagName.Dining
+			TagNames.Food,
+			TagNames.Dining
 		]
 	},
 	{
 		label: 'Clean out the garage',
 		isCompleted: false,
 		tags: [
-			TagName.Organization,
-			TagName.Home
+			TagNames.Organization,
+			TagNames.Home
 		]
 	},
 	{
 		label: 'Go to a concert',
 		isCompleted: true,
 		tags: [
-			TagName.Music,
-			TagName.Entertainment
+			TagNames.Music,
+			TagNames.Entertainment
 		]
 	},
 	{
 		label: 'Create a budget plan',
 		isCompleted: false,
 		tags: [
-			TagName.Finance,
-			TagName.Planning
+			TagNames.Finance,
+			TagNames.Planning
 		]
 	},
 	{
 		label: 'Attend a local festival',
 		isCompleted: true,
 		tags: [
-			TagName.Community,
-			TagName.Events
+			TagNames.Community,
+			TagNames.Events
 		]
 	},
 	{
 		label: 'Host a game night',
 		isCompleted: false,
 		tags: [
-			TagName.Social,
-			TagName.Fun
+			TagNames.Social,
+			TagNames.Fun
 		]
 	},
 	{
 		label: 'Write a letter to a friend',
 		isCompleted: true,
 		tags: [
-			TagName.Writing,
-			TagName.Friendship
+			TagNames.Writing,
+			TagNames.Friendship
 		]
 	},
 	{
 		label: 'Take a scenic drive',
 		isCompleted: false,
 		tags: [
-			TagName.Travel,
-			TagName.Leisure
+			TagNames.Travel,
+			TagNames.Leisure
 		]
 	},
 	{
 		label: 'Declutter the closet',
 		isCompleted: true,
 		tags: [
-			TagName.Organization,
-			TagName.Home
+			TagNames.Organization,
+			TagNames.Home
 		]
 	},
 	{
 		label: 'Practice meditation',
 		isCompleted: false,
 		tags: [
-			TagName.Wellness,
-			TagName.SelfCare
+			TagNames.Wellness,
+			TagNames.SelfCare
 		]
 	},
 	{
 		label: 'Visit a museum',
 		isCompleted: true,
 		tags: [
-			TagName.Culture,
-			TagName.Education
+			TagNames.Culture,
+			TagNames.Education
 		]
 	},
 	{
@@ -438,80 +435,80 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Events,
-			TagName.Planning
+			TagNames.Events,
+			TagNames.Planning
 		]
 	},
 	{
 		label: 'Go hiking this weekend',
 		isCompleted: true,
 		tags: [
-			TagName.Fitness,
-			TagName.Nature
+			TagNames.Fitness,
+			TagNames.Nature
 		]
 	},
 	{
 		label: 'Create a photo album',
 		isCompleted: false,
 		tags: [
-			TagName.Creativity,
-			TagName.Memories
+			TagNames.Creativity,
+			TagNames.Memories
 		]
 	},
 	{
 		label: 'Attend a book club meeting',
 		isCompleted: true,
 		tags: [
-			TagName.Reading,
-			TagName.Social
+			TagNames.Reading,
+			TagNames.Social
 		]
 	},
 	{
 		label: 'Learn to cook a new recipe',
 		isCompleted: false,
 		tags: [
-			TagName.Cooking,
-			TagName.Learning
+			TagNames.Cooking,
+			TagNames.Learning
 		]
 	},
 	{
 		label: 'Sign up for a marathon',
 		isCompleted: true,
 		tags: [
-			TagName.Fitness,
-			TagName.Goals
+			TagNames.Fitness,
+			TagNames.Goals
 		]
 	},
 	{
 		label: 'Explore a new hobby',
 		isCompleted: false,
 		tags: [
-			TagName.Hobbies,
-			TagName.Creativity
+			TagNames.Hobbies,
+			TagNames.Creativity
 		]
 	},
 	{
 		label: 'Take a photography walk',
 		isCompleted: false,
 		tags: [
-			TagName.Photography,
-			TagName.Nature
+			TagNames.Photography,
+			TagNames.Nature
 		]
 	},
 	{
 		label: 'Create a self-care routine',
 		isCompleted: true,
 		tags: [
-			TagName.SelfCare,
-			TagName.Wellness
+			TagNames.SelfCare,
+			TagNames.Wellness
 		]
 	},
 	{
 		label: 'Join a local sports league',
 		isCompleted: false,
 		tags: [
-			TagName.Sports,
-			TagName.Community
+			TagNames.Sports,
+			TagNames.Community
 		]
 	},
 	{
@@ -528,56 +525,56 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Social,
-			TagName.Cooking
+			TagNames.Social,
+			TagNames.Cooking
 		]
 	},
 	{
 		label: 'Learn about a new culture',
 		isCompleted: false,
 		tags: [
-			TagName.Education,
-			TagName.Culture
+			TagNames.Education,
+			TagNames.Culture
 		]
 	},
 	{
 		label: 'Participate in a community clean-up',
 		isCompleted: true,
 		tags: [
-			TagName.Volunteer,
-			TagName.Environment
+			TagNames.Volunteer,
+			TagNames.Environment
 		]
 	},
 	{
 		label: 'Create a scrapbook',
 		isCompleted: false,
 		tags: [
-			TagName.Creativity,
-			TagName.Memories
+			TagNames.Creativity,
+			TagNames.Memories
 		]
 	},
 	{
 		label: 'Watch the sunrise',
 		isCompleted: true,
 		tags: [
-			TagName.Nature,
-			TagName.Mindfulness
+			TagNames.Nature,
+			TagNames.Mindfulness
 		]
 	},
 	{
 		label: 'Try a new workout',
 		isCompleted: false,
 		tags: [
-			TagName.Fitness,
-			TagName.Health
+			TagNames.Fitness,
+			TagNames.Health
 		]
 	},
 	{
 		label: 'Attend a pottery class',
 		isCompleted: true,
 		tags: [
-			TagName.Art,
-			TagName.Learning
+			TagNames.Art,
+			TagNames.Learning
 		]
 	},
 	{
@@ -594,24 +591,24 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Media,
-			TagName.Creativity
+			TagNames.Media,
+			TagNames.Creativity
 		]
 	},
 	{
 		label: 'Plan a family game night',
 		isCompleted: true,
 		tags: [
-			TagName.Family,
-			TagName.Fun
+			TagNames.Family,
+			TagNames.Fun
 		]
 	},
 	{
 		label: 'Explore a new city',
 		isCompleted: false,
 		tags: [
-			TagName.Travel,
-			TagName.Adventure
+			TagNames.Travel,
+			TagNames.Adventure
 		]
 	},
 	{
@@ -628,176 +625,176 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Career,
-			TagName.Tech
+			TagNames.Career,
+			TagNames.Tech
 		]
 	},
 	{
 		label: 'Go stargazing',
 		isCompleted: false,
 		tags: [
-			TagName.Nature,
-			TagName.Relaxation
+			TagNames.Nature,
+			TagNames.Relaxation
 		]
 	},
 	{
 		label: 'Take a day trip to the beach',
 		isCompleted: true,
 		tags: [
-			TagName.Travel,
-			TagName.Leisure
+			TagNames.Travel,
+			TagNames.Leisure
 		]
 	},
 	{
 		label: 'Write a poem',
 		isCompleted: false,
 		tags: [
-			TagName.Writing,
-			TagName.Creativity
+			TagNames.Writing,
+			TagNames.Creativity
 		]
 	},
 	{
 		label: "Visit a farmer's market",
 		isCompleted: true,
 		tags: [
-			TagName.Food,
-			TagName.Community
+			TagNames.Food,
+			TagNames.Community
 		]
 	},
 	{
 		label: 'Join a dance class',
 		isCompleted: false,
 		tags: [
-			TagName.Fitness,
-			TagName.Social
+			TagNames.Fitness,
+			TagNames.Social
 		]
 	},
 	{
 		label: 'Create a bucket list',
 		isCompleted: true,
 		tags: [
-			TagName.Goals,
-			TagName.Planning
+			TagNames.Goals,
+			TagNames.Planning
 		]
 	},
 	{
 		label: 'Write a letter to your future self',
 		isCompleted: false,
 		tags: [
-			TagName.Writing,
-			TagName.Reflection
+			TagNames.Writing,
+			TagNames.Reflection
 		]
 	},
 	{
 		label: 'Attend a music festival',
 		isCompleted: true,
 		tags: [
-			TagName.Music,
-			TagName.Events
+			TagNames.Music,
+			TagNames.Events
 		]
 	},
 	{
 		label: 'Start a vegetable garden',
 		isCompleted: false,
 		tags: [
-			TagName.Gardening,
-			TagName.Food
+			TagNames.Gardening,
+			TagNames.Food
 		]
 	},
 	{
 		label: 'Create a wellness plan',
 		isCompleted: true,
 		tags: [
-			TagName.Health,
-			TagName.SelfCare
+			TagNames.Health,
+			TagNames.SelfCare
 		]
 	},
 	{
 		label: 'Explore local history',
 		isCompleted: false,
 		tags: [
-			TagName.Learning,
-			TagName.Culture
+			TagNames.Learning,
+			TagNames.Culture
 		]
 	},
 	{
 		label: 'Go for a bike ride',
 		isCompleted: true,
 		tags: [
-			TagName.Fitness,
-			TagName.Leisure
+			TagNames.Fitness,
+			TagNames.Leisure
 		]
 	},
 	{
 		label: 'Create a family recipe book',
 		isCompleted: false,
 		tags: [
-			TagName.Cooking,
-			TagName.Family
+			TagNames.Cooking,
+			TagNames.Family
 		]
 	},
 	{
 		label: 'Volunteer for a local charity',
 		isCompleted: true,
 		tags: [
-			TagName.Volunteer,
-			TagName.Community
+			TagNames.Volunteer,
+			TagNames.Community
 		]
 	},
 	{
 		label: 'Attend a lecture or seminar',
 		isCompleted: false,
 		tags: [
-			TagName.Education,
-			TagName.Learning
+			TagNames.Education,
+			TagNames.Learning
 		]
 	},
 	{
 		label: 'Go on a photography expedition',
 		isCompleted: true,
 		tags: [
-			TagName.Photography,
-			TagName.Adventure
+			TagNames.Photography,
+			TagNames.Adventure
 		]
 	},
 	{
 		label: 'Join a book exchange',
 		isCompleted: false,
 		tags: [
-			TagName.Reading,
-			TagName.Social
+			TagNames.Reading,
+			TagNames.Social
 		]
 	},
 	{
 		label: 'Practice mindfulness daily',
 		isCompleted: true,
 		tags: [
-			TagName.Wellness,
-			TagName.SelfCare
+			TagNames.Wellness,
+			TagNames.SelfCare
 		]
 	},
 	{
 		label: 'Create a home workout plan',
 		isCompleted: false,
 		tags: [
-			TagName.Fitness,
-			TagName.Health
+			TagNames.Fitness,
+			TagNames.Health
 		]
 	},
 	{
 		label: 'Host a movie marathon',
 		isCompleted: false,
 		tags: [
-			TagName.Entertainment,
-			TagName.Social
+			TagNames.Entertainment,
+			TagNames.Social
 		]
 	},
 	{
 		label: 'Take a cooking challenge',
 		isCompleted: true,
 		tags: [
-			TagName.Cooking,
-			TagName.Fun
+			TagNames.Cooking,
+			TagNames.Fun
 		]
 	},
 	{
@@ -814,208 +811,208 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.DIY,
-			TagName.Creativity
+			TagNames.DIY,
+			TagNames.Creativity
 		]
 	},
 	{
 		label: 'Join a public speaking group',
 		isCompleted: true,
 		tags: [
-			TagName.Skills,
-			TagName.Networking
+			TagNames.Skills,
+			TagNames.Networking
 		]
 	},
 	{
 		label: 'Create a morning routine',
 		isCompleted: false,
 		tags: [
-			TagName.SelfCare,
-			TagName.Productivity
+			TagNames.SelfCare,
+			TagNames.Productivity
 		]
 	},
 	{
 		label: 'Plan a themed dinner night',
 		isCompleted: true,
 		tags: [
-			TagName.Cooking,
-			TagName.Social
+			TagNames.Cooking,
+			TagNames.Social
 		]
 	},
 	{
 		label: 'Watch a TED talk',
 		isCompleted: false,
 		tags: [
-			TagName.Learning,
-			TagName.Inspiration
+			TagNames.Learning,
+			TagNames.Inspiration
 		]
 	},
 	{
 		label: 'Take a day to unplug from technology',
 		isCompleted: true,
 		tags: [
-			TagName.Mindfulness,
-			TagName.SelfCare
+			TagNames.Mindfulness,
+			TagNames.SelfCare
 		]
 	},
 	{
 		label: 'Explore local hiking trails',
 		isCompleted: false,
 		tags: [
-			TagName.Nature,
-			TagName.Fitness
+			TagNames.Nature,
+			TagNames.Fitness
 		]
 	},
 	{
 		label: 'Create a personal manifesto',
 		isCompleted: true,
 		tags: [
-			TagName.Reflection,
-			TagName.Goals
+			TagNames.Reflection,
+			TagNames.Goals
 		]
 	},
 	{
 		label: 'Try a new sport',
 		isCompleted: false,
 		tags: [
-			TagName.Fitness,
-			TagName.Fun
+			TagNames.Fitness,
+			TagNames.Fun
 		]
 	},
 	{
 		label: 'Start a gratitude journal',
 		isCompleted: true,
 		tags: [
-			TagName.SelfCare,
-			TagName.Reflection
+			TagNames.SelfCare,
+			TagNames.Reflection
 		]
 	},
 	{
 		label: 'Plan a charity fundraiser',
 		isCompleted: false,
 		tags: [
-			TagName.Community,
-			TagName.Fundraising
+			TagNames.Community,
+			TagNames.Fundraising
 		]
 	},
 	{
 		label: 'Learn about a historical event',
 		isCompleted: true,
 		tags: [
-			TagName.Education,
-			TagName.History
+			TagNames.Education,
+			TagNames.History
 		]
 	},
 	{
 		label: 'Create a family tree',
 		isCompleted: false,
 		tags: [
-			TagName.Family,
-			TagName.Heritage
+			TagNames.Family,
+			TagNames.Heritage
 		]
 	},
 	{
 		label: 'Visit a local coffee shop',
 		isCompleted: true,
 		tags: [
-			TagName.Food,
-			TagName.Social
+			TagNames.Food,
+			TagNames.Social
 		]
 	},
 	{
 		label: 'Plan a road trip',
 		isCompleted: false,
 		tags: [
-			TagName.Travel,
-			TagName.Adventure
+			TagNames.Travel,
+			TagNames.Adventure
 		]
 	},
 	{
 		label: 'Take a class on a new skill',
 		isCompleted: true,
 		tags: [
-			TagName.Learning,
-			TagName.Growth
+			TagNames.Learning,
+			TagNames.Growth
 		]
 	},
 	{
 		label: 'Go to a local art exhibit',
 		isCompleted: false,
 		tags: [
-			TagName.Art,
-			TagName.Culture
+			TagNames.Art,
+			TagNames.Culture
 		]
 	},
 	{
 		label: 'Start a savings plan',
 		isCompleted: true,
 		tags: [
-			TagName.Finance,
-			TagName.Planning
+			TagNames.Finance,
+			TagNames.Planning
 		]
 	},
 	{
 		label: 'Write a short story',
 		isCompleted: false,
 		tags: [
-			TagName.Writing,
-			TagName.Creativity
+			TagNames.Writing,
+			TagNames.Creativity
 		]
 	},
 	{
 		label: 'Plan a family picnic',
 		isCompleted: true,
 		tags: [
-			TagName.Family,
-			TagName.Outdoor
+			TagNames.Family,
+			TagNames.Outdoor
 		]
 	},
 	{
 		label: 'Go to a sports game',
 		isCompleted: false,
 		tags: [
-			TagName.Sports,
-			TagName.Entertainment
+			TagNames.Sports,
+			TagNames.Entertainment
 		]
 	},
 	{
 		label: 'Create a vision for the year',
 		isCompleted: true,
 		tags: [
-			TagName.Goals,
-			TagName.Planning
+			TagNames.Goals,
+			TagNames.Planning
 		]
 	},
 	{
 		label: 'Practice a new dance routine',
 		isCompleted: false,
 		tags: [
-			TagName.Fitness,
-			TagName.Fun
+			TagNames.Fitness,
+			TagNames.Fun
 		]
 	},
 	{
 		label: 'Visit a national park',
 		isCompleted: true,
 		tags: [
-			TagName.Nature,
-			TagName.Travel
+			TagNames.Nature,
+			TagNames.Travel
 		]
 	},
 	{
 		label: 'Try out a new hobby',
 		isCompleted: false,
 		tags: [
-			TagName.Hobbies,
-			TagName.Exploration
+			TagNames.Hobbies,
+			TagNames.Exploration
 		]
 	},
 	{
 		label: 'Go to a comedy show',
 		isCompleted: true,
 		tags: [
-			TagName.Entertainment,
-			TagName.Fun
+			TagNames.Entertainment,
+			TagNames.Fun
 		]
 	},
 	{
@@ -1036,8 +1033,8 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Community,
-			TagName.Events
+			TagNames.Community,
+			TagNames.Events
 		]
 	},
 	{
@@ -1058,8 +1055,8 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Fitness,
-			TagName.Health
+			TagNames.Fitness,
+			TagNames.Health
 		]
 	},
 	{
@@ -1080,8 +1077,8 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Planning,
-			TagName.Holidays
+			TagNames.Planning,
+			TagNames.Holidays
 		]
 	},
 	{
@@ -1102,8 +1099,8 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Writing,
-			TagName.Creativity
+			TagNames.Writing,
+			TagNames.Creativity
 		]
 	},
 	{
@@ -1124,8 +1121,8 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Career,
-			TagName.Preparation
+			TagNames.Career,
+			TagNames.Preparation
 		]
 	},
 	{
@@ -1146,8 +1143,8 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Social,
-			TagName.Fun
+			TagNames.Social,
+			TagNames.Fun
 		]
 	},
 	{
@@ -1168,8 +1165,8 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Finance,
-			TagName.Planning
+			TagNames.Finance,
+			TagNames.Planning
 		]
 	},
 	{
@@ -1190,8 +1187,8 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Reading,
-			TagName.Goals
+			TagNames.Reading,
+			TagNames.Goals
 		]
 	},
 	{
@@ -1212,8 +1209,8 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Travel,
-			TagName.Family
+			TagNames.Travel,
+			TagNames.Family
 		]
 	},
 	{
@@ -1234,8 +1231,8 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.SelfCare,
-			TagName.Goals
+			TagNames.SelfCare,
+			TagNames.Goals
 		]
 	},
 	{
@@ -1256,8 +1253,8 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Fitness,
-			TagName.Social
+			TagNames.Fitness,
+			TagNames.Social
 		]
 	},
 	{
@@ -1278,8 +1275,8 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Social,
-			TagName.Events
+			TagNames.Social,
+			TagNames.Events
 		]
 	},
 	{
@@ -1300,8 +1297,8 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Business,
-			TagName.Innovation
+			TagNames.Business,
+			TagNames.Innovation
 		]
 	},
 	{
@@ -1322,8 +1319,8 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Art,
-			TagName.Creativity
+			TagNames.Art,
+			TagNames.Creativity
 		]
 	},
 	{
@@ -1344,8 +1341,8 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Community,
-			TagName.Health
+			TagNames.Community,
+			TagNames.Health
 		]
 	},
 	{
@@ -1366,8 +1363,8 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Business,
-			TagName.Planning
+			TagNames.Business,
+			TagNames.Planning
 		]
 	},
 	{
@@ -1388,8 +1385,8 @@ const masterTasksList: ITask[] = [
 			}
 		],
 		tags: [
-			TagName.Home,
-			TagName.Environment
+			TagNames.Home,
+			TagNames.Environment
 		]
 	}
 ];

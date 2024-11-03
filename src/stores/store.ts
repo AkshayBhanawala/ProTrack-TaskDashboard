@@ -2,8 +2,8 @@ import moment, { Moment } from 'moment';
 import { defineStore } from 'pinia';
 import { Loading, Screen } from 'quasar';
 
-import { BiWeeklyTasks, Note, PartialTaskStatus, Task, TaskCount, TaskCountType } from '@/models';
-import { WeeklyOverviewData } from '@/models/WeeklyOverview.model';
+import { BiWeeklyTasks, getRandomTagColor, Note, PartialTaskStatus, TagColorMap, TagColorMapType, TagNames, TagNameType, Task, TaskCount, TaskCountType } from '@/models';
+import { MinMaxDates, WeeklyOverviewData } from '@/models/WeeklyOverview.model';
 import { LocalStorageKeys, LocalStorageUtil } from '@/utils/localStorage.util';
 
 function isScreenMini() {
@@ -47,7 +47,7 @@ export const useLeftSideBarStore = defineStore('LeftSideBarState', {
 		return LocalStorageUtil.get<LeftSideBarState>(LocalStorageKeys.LeftSideBarState) || {
 			isOpen: false,
 			isMini: isScreenMini(),
-			mobileScreenBreakPointPx: 600,
+			mobileScreenBreakPointPx: 1440,
 		};
 	},
 	getters: {
@@ -134,7 +134,7 @@ export const useSelectedDayStore = defineStore('SelectedDate', {
 			this.selectedDay = date;
 		},
 		previousDay(): void {
-			if (this.selectedDay.isSame(moment().startOf('week').add(1, 'day'), 'date')) {
+			if (this.selectedDay.isSame(moment().startOf('week'), 'date')) {
 				this.selectedDay = moment().endOf('week');
 			} else {
 				this.selectedDay = this.selectedDay.clone().subtract(1, 'day');
@@ -142,7 +142,7 @@ export const useSelectedDayStore = defineStore('SelectedDate', {
 		},
 		nextDay(): void {
 			if (this.selectedDay.isSame(moment().endOf('week'), 'date')) {
-				this.selectedDay = moment().startOf('week').add(1, 'day');
+				this.selectedDay = moment().startOf('week');
 			} else {
 				this.selectedDay = this.selectedDay.clone().add(1, 'day');
 			}
@@ -163,14 +163,14 @@ export const useBiWeeklyTasksStore = defineStore('BiWeeklyTasks', {
 
 			return {
 				thisWeek: Object.values(thisWeek || {})
-					.map(tasksOfTheDay => tasksOfTheDay.filter(task => task.isCompleted === true).length),
+					.map(tasksOfTheDay => tasksOfTheDay.filter(task => task.isCompleted === true).length || 0),
 				lastWeek: Object.values(lastWeek || {})
-					.map(tasksOfTheDay => tasksOfTheDay.filter(task => task.isCompleted === true).length)
+					.map(tasksOfTheDay => tasksOfTheDay.filter(task => task.isCompleted === true).length || 0)
 			};
 		},
 		getTaskForTheDayData(state): Task[] {
 			const thisWeek = state.biWeeklyTasks?.thisWeek;
-			const todayDate = useSelectedDayStore().getSelectedDay.format('YYYY-MM-DD');
+			const todayDate = useSelectedDayStore().getSelectedDay.format('YYYY/MM/DD');
 			return thisWeek?.[todayDate] || [];
 		},
 		getTasksCountData(state): TaskCount {
@@ -196,7 +196,32 @@ export const useBiWeeklyTasksStore = defineStore('BiWeeklyTasks', {
 		},
 		getThisWeekDates(state): Moment[] {
 			const thisWeek = state.biWeeklyTasks?.thisWeek;
-			return Object.keys(thisWeek || {}).map((date) => moment(date, 'YYYY-MM-DD'));
+			return Object.keys(thisWeek || {}).map((date) => moment(date, 'YYYY/MM/DD'));
+		},
+		getMinMaxDates(state): MinMaxDates {
+			const dates = {
+				lastWeek: Object.keys(state.biWeeklyTasks?.lastWeek || {}).sort(),
+				thisWeek: Object.keys(state.biWeeklyTasks?.thisWeek || {}).sort(),
+			};
+			if (dates.thisWeek.length === 0 && dates.lastWeek.length === 0) {
+				return {
+					min: moment(), max: moment(),
+					lastWeek: { min: moment(), max: moment() },
+					thisWeek: { min: moment(), max: moment() }
+				};
+			}
+			return {
+				min: moment(dates.lastWeek[0], 'YYYY/MM/DD'),
+				max: moment(dates.thisWeek[dates.thisWeek.length - 1], 'YYYY/MM/DD'),
+				lastWeek: {
+					min: moment(dates.lastWeek[0], 'YYYY/MM/DD'),
+					max: moment(dates.lastWeek[dates.lastWeek.length - 1], 'YYYY/MM/DD'),
+				},
+				thisWeek: {
+					min: moment(dates.thisWeek[0], 'YYYY/MM/DD'),
+					max: moment(dates.thisWeek[dates.thisWeek.length - 1], 'YYYY/MM/DD'),
+				},
+			};
 		}
 	},
 	actions: {
@@ -204,7 +229,70 @@ export const useBiWeeklyTasksStore = defineStore('BiWeeklyTasks', {
 			this.biWeeklyTasks = biWeeklyTasks;
 			LocalStorageUtil.set(LocalStorageKeys.BiWeeklyTasks, biWeeklyTasks);
 		},
+		addNewTask(newTask: Task): void {
+			const dateRange = this.getMinMaxDates;
+			if (newTask.date.isSameOrAfter(dateRange.lastWeek.min) && newTask.date.isSameOrBefore(dateRange.lastWeek.max)) {
+				if (this.biWeeklyTasks?.lastWeek) {
+					this.biWeeklyTasks?.lastWeek[newTask.date.format('YYYY/MM/DD')].push(newTask);
+				} else {
+					this.biWeeklyTasks.lastWeek = { [newTask.date.format('YYYY/MM/DD')]: [newTask] };
+				}
+				// this.biWeeklyTasks.lastWeek = { ...this.biWeeklyTasks.lastWeek };
+			} else if (newTask.date.isSameOrAfter(dateRange.thisWeek.min) && newTask.date.isSameOrBefore(dateRange.thisWeek.max)) {
+				if (this.biWeeklyTasks?.thisWeek) {
+					this.biWeeklyTasks?.thisWeek[newTask.date.format('YYYY/MM/DD')].push(newTask);
+				} else {
+					this.biWeeklyTasks.thisWeek = { [newTask.date.format('YYYY/MM/DD')]: [newTask] };
+				}
+				// this.biWeeklyTasks.thisWeek = { ...this.biWeeklyTasks.thisWeek };
+			}
+			this.biWeeklyTasks = { ...this.biWeeklyTasks };
+			LocalStorageUtil.set(LocalStorageKeys.BiWeeklyTasks, this.biWeeklyTasks);
+		},
+		deleteThisWeekTask(deleteTask: Task): void {
+			const thisWeek = this.biWeeklyTasks?.thisWeek;
+			const date = deleteTask.date.format('YYYY/MM/DD');
+			if (thisWeek?.[date]) {
+				thisWeek[date] = thisWeek[date].filter(oldTask => oldTask.id !== deleteTask.id);
+				this.biWeeklyTasks = { ...this.biWeeklyTasks };
+				LocalStorageUtil.set(LocalStorageKeys.BiWeeklyTasks, this.biWeeklyTasks);
+			}
+		},
+		updateThisWeekTask(updatedTask: Task): void {
+			const thisWeek = this.biWeeklyTasks?.thisWeek;
+			const date = updatedTask.date.format('YYYY/MM/DD');
+			console.log('date:', date);
+			console.log('thisWeek[date]:', thisWeek?.[date]);
+			if (thisWeek?.[date]) {
+				thisWeek[date] = thisWeek[date].map(oldTask => oldTask.id === updatedTask.id ? updatedTask : oldTask);
+				thisWeek[date] = [...thisWeek[date]];
+
+				this.biWeeklyTasks = { ...this.biWeeklyTasks };
+				LocalStorageUtil.set(LocalStorageKeys.BiWeeklyTasks, this.biWeeklyTasks);
+			}
+		}
 	},
+});
+
+export const useTaskTagsStore = defineStore('TaskTags', {
+	state: () => ({
+		tags: LocalStorageUtil.get<TagNameType>(LocalStorageKeys.TaskTags) || TagNames,
+		tagColorMap: LocalStorageUtil.get<TagColorMapType>(LocalStorageKeys.TaskTagColorMap) || TagColorMap,
+	}),
+	actions: {
+		addTags(...tags: string[]): void {
+			tags.forEach((tag) => {
+				this.tags[tag] = tag;
+				this.tagColorMap[tag] = getRandomTagColor();
+			});
+
+			this.tags = { ...this.tags };
+			LocalStorageUtil.set(LocalStorageKeys.TaskTags, this.tags);
+
+			this.tagColorMap = { ...this.tagColorMap };
+			LocalStorageUtil.set(LocalStorageKeys.TaskTagColorMap, this.tagColorMap);
+		}
+	}
 });
 
 // Watch for changes in the biWeeklyTasks store

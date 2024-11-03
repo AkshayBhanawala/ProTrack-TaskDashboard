@@ -1,6 +1,5 @@
-import { Moment } from 'moment';
-
-import { Tag, TagName } from './TaskTag.model';
+import moment, { Moment } from 'moment';
+import { v4 as uuid_v4 } from 'uuid';
 
 export enum PartialTaskStatus {
 	VALUE = 'PARTIAL',
@@ -8,46 +7,41 @@ export enum PartialTaskStatus {
 
 export type TaskStatus = boolean | PartialTaskStatus.VALUE;
 
-export interface ITask<AllowedStatus = TaskStatus, TagType = TagName> {
+export interface ITask<AllowedStatus = TaskStatus, DateType = Moment> {
+	id?: string;
 	label: string;
 	isCompleted: AllowedStatus;
-	date?: Moment;
-	subtasks?: Pick<ITask<boolean>, 'label' | 'isCompleted' | 'date'>[];
-	tags?: TagType[];
+	date?: DateType;
+	subtasks?: Pick<ITask<boolean, DateType>, 'label' | 'isCompleted' | 'date'>[];
+	tags?: string[];
 }
+
+export type ITaskInput = ITask<TaskStatus, string>;
 
 export class BaseTask<AllowedStatus extends TaskStatus = TaskStatus> implements ITask<AllowedStatus> {
 	label: string;
 	isCompleted: AllowedStatus;
-	date?: Moment;
-	// inProgress: boolean;
-	// dateAdded: Moment;
-	// dateCompleted?: Moment;
 
-	constructor(label: string, isCompleted: AllowedStatus, date?: Moment) {
+	constructor(label: string, isCompleted: AllowedStatus) {
 		this.label = label;
-		this.isCompleted = isCompleted;
-		this.date = date;
-		// this.inProgress = inProgress;
-		// this.dateAdded = dateAdded;
-		// this.dateCompleted = dateCompleted;
+		this.isCompleted = isCompleted ?? false;
 	}
 }
 
-export type Subtask = BaseTask<boolean>;
+export class Subtask extends BaseTask<boolean> { }
 
-export class Task extends BaseTask {
+export class Task extends BaseTask implements ITask {
+	id: string;
+	date: Moment;
 	subtasks: Subtask[];
-	tags: Tag[];
+	tags?: string[] | undefined;
 
-	constructor(label: string, isCompleted: TaskStatus, date?: Moment, subtasks: Subtask[] = [], tags: Tag[] = []) {
-		super(label, isCompleted, date);
+	constructor(label: string, isCompleted: TaskStatus, date?: Moment, subtasks: Subtask[] = [], tags: string[] = []) {
+		super(label, isCompleted);
+		this.id = uuid_v4();
+		this.date = date ?? moment();
 		this.subtasks = subtasks?.length ? subtasks : [];
 		this.tags = tags?.length ? tags : [];
-	}
-
-	getDates() {
-		return this.subtasks.map((subtask) => subtask.date);
 	}
 
 	get isFullyCompleted(): TaskStatus {
@@ -83,9 +77,9 @@ export class Task extends BaseTask {
 	}
 }
 
-export interface IBiWeeklyTasks<TagType = TagName> {
-	lastWeek?: { [key: string]: ITask<TaskStatus, TagType>[] };
-	thisWeek?: { [key: string]: ITask<TaskStatus, TagType>[] };
+export interface IBiWeeklyTasks {
+	lastWeek?: { [key: string]: ITask<TaskStatus>[] };
+	thisWeek?: { [key: string]: ITask<TaskStatus>[] };
 }
 
 export interface BiWeeklyTasks {

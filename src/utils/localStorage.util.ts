@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { BaseTask, BiWeeklyTasks, IBiWeeklyTasks, INote, ITask, Note, Tag, Task, TaskStatus } from '@/models';
+import { BiWeeklyTasks, IBiWeeklyTasks, INote, ITask, Note, Subtask, Task, TaskStatus } from '@/models';
 
 export interface StorageItem<T> {
 	value: T;
@@ -14,6 +14,8 @@ export enum LocalStorageKeys {
 	RightSideBarState = 'RightSideBarState',
 	LeftSideBarState = 'LeftSideBarState',
 	SelectedDate = 'SelectedDate',
+	TaskTags = 'TaskTags',
+	TaskTagColorMap = 'TaskTagColorMap',
 }
 
 export class LocalStorageUtil {
@@ -24,6 +26,7 @@ export class LocalStorageUtil {
 				timestamp: Date.now(),
 				expiry
 			};
+			// console.log('LS Save item:', key, item);
 			localStorage.setItem(key, JSON.stringify(item));
 		} catch (error) {
 			console.error('Error saving to localStorage:', error);
@@ -45,7 +48,7 @@ export class LocalStorageUtil {
 
 			switch (key) {
 				case LocalStorageKeys.BiWeeklyTasks:
-					return convertStoredTasks(parsedItem.value as IBiWeeklyTasks<Tag>) as T;
+					return convertStoredTasks(parsedItem.value as IBiWeeklyTasks) as T;
 				case LocalStorageKeys.Notes:
 					return convertStoredNotes(parsedItem.value as INote[]) as T;
 			}
@@ -113,28 +116,27 @@ export const STORAGE_KEYS = {
 
 export type StorageKeys = typeof STORAGE_KEYS[keyof typeof STORAGE_KEYS];
 
-function convertStoredTasks(storedTasks: IBiWeeklyTasks<Tag>): BiWeeklyTasks {
+function convertStoredTasks(storedTasks: IBiWeeklyTasks): BiWeeklyTasks {
 	return {
 		lastWeek: convertWeekTasks(storedTasks.lastWeek),
 		thisWeek: convertWeekTasks(storedTasks.thisWeek)
 	};
 
-	function convertTaskArray(tasks: ITask<TaskStatus, Tag>[]): Task[] {
+	function convertTaskArray(tasks: ITask<TaskStatus>[]): Task[] {
 		return tasks.map(taskData => {
 			const task = new Task(
 				taskData.label,
-				taskData.isCompleted,
-				taskData.date ? moment(taskData.date) : undefined
+				taskData.isCompleted ?? false,
+				taskData.date ? moment(taskData.date) : moment()
 			);
 
 			if (taskData.subtasks?.length) {
-				task.subtasks = taskData.subtasks.map(subtask =>
-					new BaseTask<boolean>(
+				task.subtasks = taskData.subtasks.map((subtask: ITask<boolean>): Subtask => {
+					return new Subtask(
 						subtask.label,
 						subtask.isCompleted,
-						subtask.date ? moment(subtask.date) : undefined
-					)
-				);
+					);
+				});
 			}
 
 			task.tags = taskData?.tags || [];
@@ -143,7 +145,7 @@ function convertStoredTasks(storedTasks: IBiWeeklyTasks<Tag>): BiWeeklyTasks {
 		});
 	};
 
-	function convertWeekTasks(weekTasks: { [key: string]: ITask<TaskStatus, Tag>[] } = {}) {
+	function convertWeekTasks(weekTasks: { [key: string]: ITask<TaskStatus>[] } = {}) {
 		const converted: { [key: string]: Task[] } = {};
 		Object.entries(weekTasks).forEach(([date, tasks]) => {
 			converted[date] = convertTaskArray(tasks);

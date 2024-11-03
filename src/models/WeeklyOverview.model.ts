@@ -1,4 +1,5 @@
 import { ApexOptions } from 'apexcharts';
+import { Moment } from 'moment';
 import { extend, getCssVar } from 'quasar';
 
 const baseChartOptions: ApexOptions = {
@@ -48,9 +49,22 @@ const baseChartOptions: ApexOptions = {
 				if (seriesValue === undefined) {
 					return undefined as any;
 				}
-				const value = w.config.series[seriesIndex]?.value?.[dataPointIndex];
-				const outOf = w.config.series[seriesIndex]?.outOf?.[dataPointIndex];
-				return `${value}/${outOf}`;
+				if (
+					w.config.series[seriesIndex]?.value?.[dataPointIndex] >= 0
+					&& w.config.series[seriesIndex]?.outOf?.[dataPointIndex] >= 0
+				) {
+					const value = w.config.series[seriesIndex].value[dataPointIndex];
+					const outOf = w.config.series[seriesIndex].outOf[dataPointIndex];
+					return `${value}/${outOf}`;
+				} else if (
+					w.config.custom?.series?.[seriesIndex]?.value?.[dataPointIndex] >= 0
+					&& w.config.custom?.series?.[seriesIndex]?.outOf?.[dataPointIndex] >= 0
+				) {
+					const value = w.config.custom.series[seriesIndex].value[dataPointIndex];
+					const outOf = w.config.custom.series[seriesIndex].outOf[dataPointIndex];
+					return `${value}/${outOf}`;
+				}
+				return `${seriesValue}%`;
 			},
 			title: { formatter: () => '' }
 		},
@@ -64,7 +78,7 @@ const baseChartOptions: ApexOptions = {
 	markers: { size: 0 },
 	xaxis: {
 		tickPlacement: 'between',
-		categories: ['Mon', 'Tues', 'Wed', 'Thus', 'Fri', 'Sat'],
+		categories: ['Sun', 'Mon', 'Tues', 'Wed', 'Thus', 'Fri', 'Sat'],
 		// overwriteCategories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
 		labels: { show: true },
 		axisBorder: { show: false },
@@ -75,8 +89,8 @@ const baseChartOptions: ApexOptions = {
 	yaxis: {
 		show: false,
 		forceNiceScale: true,
-		min: -25,
-		max: 125,
+		min: -20,
+		max: 135,
 		axisBorder: { show: false },
 		axisTicks: { show: false },
 		crosshairs: { show: false },
@@ -98,11 +112,14 @@ const barChartOptions: ApexOptions = extend(
 export type ApexChartEvents = ApexChart['events'];
 
 export const ChartOptions = {
-	line: (events: ApexChartEvents, ...moreOptions: ApexOptions[]): ApexOptions =>
+	line: (events: ApexChartEvents, ...moreOptions: ApexOptions[] | any[]): ApexOptions =>
 		extend(true, {}, lineChartOptions, { chart: { events } }, ...moreOptions),
 
-	bar: (events: ApexChartEvents, ...moreOptions: ApexOptions[]): ApexOptions =>
+	bar: (events: ApexChartEvents, ...moreOptions: ApexOptions[] | any[]): ApexOptions =>
 		extend(true, {}, barChartOptions, { chart: { events } }, ...moreOptions),
+
+	extend: (...options: ApexOptions[] | any[]): ApexOptions =>
+		extend(true, {}, ...options),
 };
 
 export type ChartData = number[];
@@ -116,3 +133,12 @@ export interface ChartSeries {
 }
 
 export type WeeklyOverviewSeries = { series: ChartSeries[] };
+
+export type MinMaxDates = {
+	min: Moment,
+	max: Moment,
+	lastWeek: { min: Moment, max: Moment },
+	thisWeek: { min: Moment, max: Moment }
+};
+
+export type ChartType = ApexChart['type'];
