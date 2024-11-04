@@ -1,0 +1,1 @@
+import{a as o}from"./axios.0ed95acd.js";import{c as i}from"./index.dcb9f6d9.js";const e=o.create({baseURL:"https://api.example.com"});var t=i(({app:a})=>{a.provide("axios",o),a.provide("api",e)});export{e as api,t as default};
