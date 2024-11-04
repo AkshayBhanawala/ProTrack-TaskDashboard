@@ -4,14 +4,35 @@
 			<q-avatar class="logo-mono-white-no-circle logo-icon footer-logo row items-center full-height justify-center">
 				<img src="images/logo-mono-white-no-circle.svg" alt="Avatar" />
 			</q-avatar>
-			<div class="header1 logo-text">ProTrack</div>
+			<div class="header1 logo-text text-shadow">ProTrack</div>
 		</div>
-		<div class="header3">Made in India with ❤️ &nbsp; {{ currentYear }}</div>
+		<div class="credits header3 text-shadow">
+			<div class="info">Meticulously bringing Art to Life with ❤️</div>
+			<div class="designer gt-xs">
+				<span>Base</span>
+				<a target="_blank" rel="noopener noreferrer" class="design" href="https://www.figma.com/design/2n42N63thKhQh9dqg5Z0HT/Design-Challenge"
+					>Design</a
+				>
+				<span>by</span
+				><a target="_blank" rel="noopener noreferrer" class="designer-name" href="https://in.linkedin.com/in/raahida-kalami-041002raah"
+					>Raahida Kalami</a
+				>
+			</div>
+			<div class="designer xs wrap">
+				<a target="_blank" rel="noopener noreferrer" class="design" href="https://www.figma.com/design/2n42N63thKhQh9dqg5Z0HT/Design-Challenge"
+					>Design</a
+				>
+				<span>by</span>
+				<a target="_blank" rel="noopener noreferrer" class="designer-name" href="https://in.linkedin.com/in/raahida-kalami-041002raah"
+					>Raahida Kalami</a
+				>
+			</div>
+		</div>
 		<div class="developer">
 			<div class="wrapper">
-				<div class="header3">Developed by</div>
+				<div class="header3 text-shadow">Developed by</div>
 				<div class="header1 name">
-					<a target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/TH3-AZ/" class=""> TH3-AZ </a>
+					<a target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/TH3-AZ/" class="">TH3-AZ</a>
 				</div>
 			</div>
 		</div>
@@ -22,10 +43,11 @@
 	defineOptions({
 		name: 'FooterMain',
 	});
-	const currentYear = new Date().getFullYear();
 </script>
 
 <style scoped lang="scss">
+	@import url('//fonts.googleapis.com/css2?family=Borel&display=swap');
+
 	.q-footer {
 		z-index: -1;
 		position: fixed;
@@ -63,13 +85,19 @@
 				text-align: right;
 			}
 		}
+
 		@media (max-width: $breakpoint-xs) {
 			.logo-text {
 				display: none;
 			}
+
 			> * {
 				flex-basis: auto;
 			}
+		}
+
+		.text-shadow {
+			text-shadow: 1px 2px 4px $text;
 		}
 
 		.footer-logo {
@@ -85,6 +113,61 @@
 		}
 		.logo-text {
 			font-size: 3rem;
+		}
+
+		.credits {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			gap: 5px;
+
+			> * {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+
+			a {
+				font-style: italic;
+				text-decoration: none;
+
+				&:hover {
+					text-decoration: underline;
+				}
+			}
+
+			.info {
+				@media (max-width: $breakpoint-xs) {
+					display: none;
+				}
+			}
+
+			.design {
+				font-family: 'Borel';
+				font-size: 1.5rem;
+				font-weight: 400;
+				font-style: italic;
+				color: $tertiary;
+				margin: 0px 6px 0px 3px;
+				transform: translateY(7px);
+
+				line-height: 1;
+			}
+
+			.designer-name {
+				line-height: 1;
+				color: $accent2;
+				z-index: 1;
+			}
+
+			.designer {
+				gap: 5px;
+
+				&.xs {
+					row-gap: 10px;
+				}
+			}
 		}
 
 		.developer {
