@@ -1,5 +1,5 @@
 <template>
-	<q-layout view="hHr lpR ffr" class="main-layout">
+	<q-layout view="hHr lpR lFr" class="main-layout">
 		<HeaderMain />
 
 		<div class="menu-side-bar-drawer">
@@ -24,7 +24,7 @@
 			</q-drawer>
 		</div>
 
-		<q-page-container>
+		<q-page-container ref="pageContainerRef" class="main-page-container" @vue:updated="onPageContainerUpdated">
 			<router-view />
 		</q-page-container>
 
@@ -39,12 +39,14 @@
 			<NotificationSideBar />
 		</q-drawer>
 
-		<!-- <FooterMain /> -->
+		<FooterMain />
+		<div style="height: 1px">&nbsp;</div>
 	</q-layout>
 </template>
 
 <script setup lang="ts">
-	import { Screen } from 'quasar';
+	import { QPageContainer, Screen } from 'quasar';
+	import { ref } from 'vue';
 
 	import FooterMain from '@/components/FooterMain.component.vue';
 	import HeaderMain from '@/components/HeaderMain.component.vue';
@@ -64,13 +66,29 @@
 
 	const leftSideBarState = useLeftSideBarStore();
 	const rightSideBarState = useRightSideBarStore();
+	const pageContainerRef = ref<QPageContainer>();
 
 	Screen.setSizes({ xl: 1920, lg: 1400, md: 1050, sm: 700 });
+
+	function onPageContainerUpdated(event: any) {
+		if (event.el) {
+			event.el.style.marginBottom = `calc(${event.el.style.paddingBottom} - 20px)`;
+			event.el.style.paddingBottom = 0;
+			event.el.style.marginLeft = event.el.style.paddingLeft;
+			event.el.style.paddingLeft = 0;
+		}
+	}
 </script>
 
 <style scoped lang="scss">
 	.main-layout {
 		max-height: 100vh;
+
+		.main-page-container {
+			border-radius: 30px;
+			background-color: $background;
+			overflow: hidden;
+		}
 	}
 	.menu-side-bar-drawer {
 		:deep() {

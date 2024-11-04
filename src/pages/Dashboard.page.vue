@@ -112,9 +112,11 @@
 
 <style scoped lang="scss">
 	main {
+		background: $background;
 		padding: 15px 25px;
 		row-gap: 15px;
 		column-gap: 25px;
+		min-height: 100vh;
 
 		.main-splitter,
 		.left-splitter,
