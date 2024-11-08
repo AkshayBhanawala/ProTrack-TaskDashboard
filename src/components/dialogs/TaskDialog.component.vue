@@ -2,7 +2,9 @@
 	<q-dialog ref="dialogRef" @hide="onDialogHide">
 		<q-card class="task-dialog">
 			<q-card-section class="row items-center q-pb-none">
-				<div class="text-h6">Add New Task</div>
+				<div class="text-h6">
+					{{ props.taskOperation === 'ADD' ? 'Add New Task' : 'Edit Task' }}
+				</div>
 				<q-space />
 				<q-btn icon="sym_r_close" flat round dense v-close-popup />
 			</q-card-section>
