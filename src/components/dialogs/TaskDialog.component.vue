@@ -16,6 +16,7 @@
 						rounded
 						outlined
 						clearable
+						autofocus
 						v-model="formData.label"
 						placeholder="Title"
 						:rules="[(val) => !!val || 'Title is required']"
@@ -104,7 +105,7 @@
 					<!-- Actions -->
 					<div class="row justify-end q-gutter-sm">
 						<q-btn rounded unelevated :label="formValueUpdated ? 'Discard' : 'Cancel'" @click="onCancel" />
-						<q-btn rounded unelevated label="Save" type="submit" color="positive" />
+						<q-btn rounded unelevated :label="editTask ? 'Save' : 'Add'" type="submit" color="positive" />
 					</div>
 				</q-form>
 			</q-card-section>
