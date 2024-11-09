@@ -21,17 +21,16 @@ A (pro) Tracking system for your tasks/to-do
 #### Mobile
 ![Mobile - 01 - Main](./.github/assets/images/Mobile-01-Main.png)
 
-
->
+<br /><br /><br />
+---
+> ## Notes:
 > - This is a demo dashboard, and it **DOES NOT** use any backend.
 > - All data is **generated randomly** on first load and stored in the browser's local storage and maintained the same until local storage is cleared.
 > - If you want to generated new random data, you can <ins>*clear the local storage and reload the page*</ins> **OR** <ins>*click on the "[Settings](#settings-menu)" button in user profile displayed at the bottom of the left sidebar and then click on "[New Data](#settings-menu)" button from the popover menu*</ins>.
 
 
----
 <br /><br /><br /><br />
-
-
+---
 ## Install the dependencies
 ```bash
 yarn
