@@ -9,9 +9,9 @@ A (pro) Tracking system for your tasks/to-do
 ![Desktop - 03 - Edit Task](./.github/assets/images/Desktop-03-EditTask.png)
 ![Desktop - 04 - Delete Task](./.github/assets/images/Desktop-04-DeleteTask.png)
 ![Desktop - 05 - Notifications](./.github/assets/images/Desktop-05-Notifications.png)
-<a name="settings-menu">
+<a name="settings-menu"></a>
 ![Desktop - 06 - Settings Menu](./.github/assets/images/Desktop-06-SettingsMenu.png)
-</a>
+
 
 #### iPad
 ![iPad - 01 - Main - Horizontal](./.github/assets/images/iPad-01-Main-Horizontal.png)
